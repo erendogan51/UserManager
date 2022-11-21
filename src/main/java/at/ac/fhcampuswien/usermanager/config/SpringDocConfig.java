@@ -9,7 +9,7 @@ public class SpringDocConfig {
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
                 .group("ASD_User_Manager")
-                .pathsToMatch("/public/**")
+                .pathsToMatch("/user/**")
                 .build();
     }
 }
