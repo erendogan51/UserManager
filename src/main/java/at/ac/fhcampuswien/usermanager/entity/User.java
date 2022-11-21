@@ -1,10 +1,7 @@
 package at.ac.fhcampuswien.usermanager.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
+@Table(name = "users") // avoid using SQL Reserved Words and Keywords
 public class User {
 
     @Id
