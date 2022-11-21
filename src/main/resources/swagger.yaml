@@ -221,7 +221,7 @@ components:
         password:
           type: string
           example: '12345'
-    ApiResponse:
+    Response:
       type: object
       properties:
         code:
