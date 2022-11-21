@@ -106,7 +106,7 @@
                             <invokerPackage>usermanager.v1.handler</invokerPackage>
                             <configOptions>
                                 <configHelp>true</configHelp>
-                                <documentationProvider>springdoc</documentationProvider>
+                                <documentationProvider>springfox</documentationProvider>
                                 <useSpringCotroller>true</useSpringCotroller>
                                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
                                 <dateLibrary>java17</dateLibrary>

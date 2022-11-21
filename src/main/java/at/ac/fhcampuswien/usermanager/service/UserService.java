@@ -5,6 +5,7 @@ import at.ac.fhcampuswien.usermanager.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import usermanager.v1.model.NewUser;
 
 @Service
 public class UserService {
@@ -15,16 +16,32 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User addUser(User user) {
-        if (userRepository.existsByUserName(user.getUserName())) {
+    public NewUser addUser(usermanager.v1.model.NewUser user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "given username is already taken");
         }
 
-        return userRepository.save(user);
+        return toNewUser(userRepository.save(toUser(user)));
     }
 
-    public void loginUser(String username, String password){
-        
+    public void loginUser(String username, String password) {}
+
+    private User toUser(NewUser newUser) {
+        var user = new User();
+        user.setFirstName(newUser.getFirstName());
+        user.setLastName(newUser.getLastName());
+        user.setUsername(newUser.getUsername());
+        user.setPassword(newUser.getPassword());
+
+        return user;
+    }
+
+    private usermanager.v1.model.NewUser toNewUser(User user) {
+        return new NewUser()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .username(user.getUsername());
     }
 }

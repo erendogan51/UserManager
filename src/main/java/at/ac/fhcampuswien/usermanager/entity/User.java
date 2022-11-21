@@ -23,8 +23,8 @@ public class User {
     private Long id;
 
     private String firstName;
-    private String surName;
-    private String userName;
+    private String lastName;
+    private String username;
     private String password;
 
     public User() {}
