@@ -57,9 +57,9 @@
             <version>0.2.4</version>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.6.13</version>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
@@ -106,7 +106,7 @@
                             <invokerPackage>usermanager.v1.handler</invokerPackage>
                             <configOptions>
                                 <configHelp>true</configHelp>
-                                <documentationProvider>springfox</documentationProvider>
+                                <documentationProvider>springdoc</documentationProvider>
                                 <useSpringCotroller>true</useSpringCotroller>
                                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
                                 <dateLibrary>java17</dateLibrary>
