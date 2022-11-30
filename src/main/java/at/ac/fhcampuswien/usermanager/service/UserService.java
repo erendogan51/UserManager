@@ -24,13 +24,14 @@ public class UserService {
         return new BCryptPasswordEncoder();
     }
 
-    public NewUser addUser(usermanager.v1.model.NewUser user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
+    public User addUser(NewUser newUser) {
+        if (userRepository.existsByUsername(newUser.getUsername())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "given username is already taken");
         }
-
-        return toNewUser(userRepository.save(toUser(user)));
+        var user = toUser(newUser);
+        userRepository.save(user);
+        return user;
     }
 
     public void loginUser(String username, String password) {}
@@ -47,14 +48,12 @@ public class UserService {
 
     private usermanager.v1.model.NewUser toNewUser(User user) {
         return new NewUser()
-                .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .username(user.getUsername());
     }
 
     public User getUserByName(String username) {
-
         return null;
     }
 }

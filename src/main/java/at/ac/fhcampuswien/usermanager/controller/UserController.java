@@ -21,7 +21,7 @@ public class UserController implements usermanager.v1.api.UserApi {
     }
 
     @Override
-    public ResponseEntity<NewUser> createUser(NewUser newUser) {
+    public ResponseEntity<User> createUser(NewUser newUser) {
         validateUser(newUser);
 
         return ResponseEntity.ok(userService.addUser(newUser));
