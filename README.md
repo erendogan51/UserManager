@@ -35,11 +35,12 @@ mvn clean install
 
 `UserManagerApplication.main()`
 
----
-
 ### Launch GUI
+
 - Launch Browser
 - Open http://localhost:8080/swagger.html
+
+---
 
 ## Features
 
