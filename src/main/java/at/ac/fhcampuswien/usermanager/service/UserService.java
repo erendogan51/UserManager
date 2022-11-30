@@ -44,4 +44,9 @@ public class UserService {
                 .lastName(user.getLastName())
                 .username(user.getUsername());
     }
+
+    public User getUserByName(String username) {
+
+        return null;
+    }
 }

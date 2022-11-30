@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: User Manager
-  description: todo
+  description: Project for Advanced Software Development
   contact:
     email: apiteam@swagger.io
   license:

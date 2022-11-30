@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.usermanager.controller;
 
+import at.ac.fhcampuswien.usermanager.entity.User;
 import at.ac.fhcampuswien.usermanager.service.UserService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -37,8 +38,9 @@ public class UserController implements usermanager.v1.api.UserApi {
     }
 
     @Override
-    public ResponseEntity<NewUser> getUserByName(String username) {
-        return null;
+    public ResponseEntity<User> getUserByName(String username) {
+
+        return ResponseEntity.ok(userService.getUserByName(username));
     }
 
     @Override

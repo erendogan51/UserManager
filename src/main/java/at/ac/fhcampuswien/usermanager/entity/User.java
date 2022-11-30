@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Builder
-@Table(name = "users") // avoid using SQL Reserved Words and Keywords
+@Table(name = "userDb") // avoid using SQL Reserved Words and Keywords
 public class User {
 
     @Id
