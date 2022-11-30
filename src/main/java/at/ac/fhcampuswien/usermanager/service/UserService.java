@@ -2,7 +2,6 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.User;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,8 +18,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -34,14 +32,15 @@ public class UserService {
         return user;
     }
 
-    public void loginUser(String username, String password) {}
+    public void loginUser(String username, String password) {
+    }
 
     private User toUser(NewUser newUser) {
         var user = new User();
         user.setFirstName(newUser.getFirstName());
         user.setLastName(newUser.getLastName());
         user.setUsername(newUser.getUsername());
-        user.setPassword(newUser.getPassword());
+        user.setPassword(encoder().encode(newUser.getPassword()));
 
         return user;
     }
