@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.NewUser;
 
@@ -32,7 +33,12 @@ public class UserService {
         return user;
     }
 
-    public void loginUser(String username, String password) {
+    public String loginUser(String username, String password) {
+        if (userRepository.checkCredentials(username, password)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Username or password incorrect");
+        }
+        return "logged in!";
     }
 
     private User toUser(NewUser newUser) {

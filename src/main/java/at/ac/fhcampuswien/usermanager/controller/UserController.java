@@ -45,7 +45,7 @@ public class UserController implements usermanager.v1.api.UserApi {
 
     @Override
     public ResponseEntity<String> loginUser(String username, String password) {
-        return null;
+        return ResponseEntity.ok(userService.loginUser(username, password));
     }
 
     @Override
