@@ -32,10 +32,10 @@ public class UserService {
     }
 
     public String loginUser(String username, String password) {
-        boolean isPasswordMatches = encoder().matches(password, userRepository.findUsersBy(username).getPassword());
-        if (isPasswordMatches) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Username or password incorrect");
+        boolean isPasswordMatches = encoder().matches(password, userRepository.findUsersByUsername(username).getPassword());
+
+        if (!isPasswordMatches) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username or password incorrect");
         }
         return "logged in!";
     }
