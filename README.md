@@ -37,6 +37,10 @@ mvn clean install
 
 ---
 
+### Launch GUI
+- Launch Browser
+- Open http://localhost:8080/swagger.html
+
 ## Features
 
 TBD
