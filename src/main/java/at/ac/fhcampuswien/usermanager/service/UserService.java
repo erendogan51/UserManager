@@ -6,13 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.NewUser;
 
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -34,7 +32,8 @@ public class UserService {
     }
 
     public String loginUser(String username, String password) {
-        if (userRepository.checkCredentials(username, password)) {
+        boolean isPasswordMatches = encoder().matches(password, userRepository.findUsersBy(username).getPassword());
+        if (isPasswordMatches) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Username or password incorrect");
         }
