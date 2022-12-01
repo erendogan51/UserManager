@@ -2,7 +2,6 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,11 +36,11 @@ public class UserService {
     }
 
     public String loginUser(String username, String password) {
-
         if (!userRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password incorrect! Retries left: ");
         } else {
             var userEntity = userRepository.findUsersByUsername(username);
+            checkLoginAttempt(userEntity);
             decreaseLoginAttempt(userEntity);
             if (!encoder().matches(password, userRepository.findUsersByUsername(username).getPassword())) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password incorrect! Retries left: ");
@@ -91,6 +90,12 @@ public class UserService {
     }
 
     private boolean checkLoginAttempt(UserEntity userEntity) {
-        return userEntity.getLoginCounter() <= 0;
+        if (userEntity.getLoginCounter() > 0) {
+            // TODO: timer for 60sec for the first time
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN, "User is blocked");
+        } else {
+            return true;
+        }
     }
 }
