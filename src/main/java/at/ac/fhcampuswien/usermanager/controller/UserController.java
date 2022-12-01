@@ -24,6 +24,7 @@ public class UserController implements usermanager.v1.api.UserApi {
 
     @Override
     public ResponseEntity<User> createUser(CreateUser user) {
+        validateUser(user);
 
         return ResponseEntity.ok(userService.addUser(user));
     }
@@ -59,24 +60,24 @@ public class UserController implements usermanager.v1.api.UserApi {
         return null;
     }
 
-    private void validateUser(User user) {
-        if (user == null) {
+    private void validateUser(CreateUser createUser) {
+        if (createUser == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user cannot be null");
         }
 
-        if (user.getUsername() == null) {
+        if (createUser.getUsername() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username cannot be null");
         }
 
-        if (user.getFirstName() == null) {
+        if (createUser.getFirstName() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "first name cannot be null");
         }
 
-        if (user.getLastName() == null) {
+        if (createUser.getLastName() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "surname cannot be null");
         }
 
-        if (user.getPassword() == null) {
+        if (createUser.getPassword() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "password cannot be null");
         }
     }
