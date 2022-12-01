@@ -101,7 +101,7 @@ paths:
             application/json:
               schema:
                 type: string
-        '400':
+        '401':
           description: Invalid username/password supplied
   /user/logout:
     get:

@@ -92,15 +92,15 @@ TBD
 - [x] 500 The backend must be developed in Java (version 15 or higher).
 - [x] 501 The system must always store passwords in encrypted form.
 - [x] 502 Git must be used as the VCS together with GitHub.
-- [ ] 503 There is a README file in the repository root that describes the operation and interactions with the system.
-- [ ] 504 Any package managers, libraries and frameworks can be used to develop the system.
-- [ ] 505 Data must be persisted until the system is restarted.
-- [ ] 506 The persistence of data can be done in any way.
+- [x] 503 There is a README file in the repository root that describes the operation and interactions with the system.
+- [x] 504 Any package managers, libraries and frameworks can be used to develop the system.
+- [x] 505 Data must be persisted until the system is restarted.
+- [x] 506 The persistence of data can be done in any way.
 
 ### Extensions (optional)
 
-- 600 The system can be interacted with using a GUI.
-- 601 The system must automatically log off the user after 120 seconds of inactivity.
+- [x] 600 The system can be interacted with using a GUI.
+- [ ] 601 The system must automatically log off the user after 120 seconds of inactivity.
 
 ---
 

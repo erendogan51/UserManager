@@ -14,6 +14,8 @@ import usermanager.v1.model.User;
 public class UserService {
     private final UserRepository userRepository;
 
+    private static int loginCounter = 3;
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -27,17 +29,29 @@ public class UserService {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "given username is already taken");
         }
-        var userEntity= userRepository.save(toUserEntity(user));
+        var userEntity = userRepository.save(toUserEntity(user));
         return toUser(userEntity);
     }
 
     public String loginUser(String username, String password) {
-        boolean isPasswordMatches = encoder().matches(password, userRepository.findUsersByUsername(username).getPassword());
+        // FIXME: when user does not exists > NullPointer
+        boolean isUserExists = userRepository.existsByUsername(username);
+        boolean isPasswordMatched = encoder().matches(password, userRepository.findUsersByUsername(username).getPassword());
 
-        if (!isPasswordMatches) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username or password incorrect");
+        if (!isUserExists || !isPasswordMatched) {
+            loginCounter--;
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password incorrect! Retries left: " + loginCounter);
         }
+        loginCounter = 3;
         return "logged in!";
+    }
+
+    public User getUserByName(String username) {
+        if (!userRepository.existsByUsername(username)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "User not found");
+        }
+        return toUser(userRepository.findUsersByUsername(username));
     }
 
     private UserEntity toUserEntity(CreateUser user) {
@@ -58,11 +72,8 @@ public class UserService {
                 .password(userEntity.getPassword());
     }
 
-    public User getUserByName(String username) {
-        if (!userRepository.existsByUsername(username)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "User not found");
-        }
-        return toUser(userRepository.findUsersByUsername(username));
+    private boolean isBlocked() {
+        return loginCounter == 0;
     }
+
 }
