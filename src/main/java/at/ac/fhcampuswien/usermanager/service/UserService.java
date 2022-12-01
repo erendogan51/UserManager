@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,8 +11,12 @@ import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.CreateUser;
 import usermanager.v1.model.User;
 
+import java.util.logging.Logger;
+
 @Service
 public class UserService {
+
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -36,11 +41,15 @@ public class UserService {
         if (!userRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password incorrect! Retries left: ");
         } else {
+            var userEntity = userRepository.findUsersByUsername(username);
+            decreaseLoginAttempt(userEntity);
             if (!encoder().matches(password, userRepository.findUsersByUsername(username).getPassword())) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password incorrect! Retries left: ");
             }
+            resetLoginAttempt(userEntity);
+            return "logged in!";
         }
-        return "logged in!";
+
     }
 
     public User getUserByName(String username) {
@@ -57,6 +66,7 @@ public class UserService {
         userEntity.setLastName(user.getLastName());
         userEntity.setUsername(user.getUsername());
         userEntity.setPassword(encoder().encode(user.getPassword()));
+        userEntity.setLoginCounter(3L);
         return userEntity;
     }
 
@@ -69,4 +79,18 @@ public class UserService {
                 .password(userEntity.getPassword());
     }
 
+    private void decreaseLoginAttempt(UserEntity userEntity) {
+        userEntity.setLoginCounter(userEntity.getLoginCounter() - 1);
+        userRepository.save(userEntity);
+        logger.warning("False login Attempt! User: " + userEntity.getUsername() + " Attempt Left: " + userEntity.getLoginCounter());
+    }
+
+    private void resetLoginAttempt(UserEntity userEntity) {
+        userEntity.setLoginCounter(3L);
+        userRepository.save(userEntity);
+    }
+
+    private boolean checkLoginAttempt(UserEntity userEntity) {
+        return userEntity.getLoginCounter() <= 0;
+    }
 }
