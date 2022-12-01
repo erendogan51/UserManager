@@ -1,13 +1,12 @@
 package at.ac.fhcampuswien.usermanager.controller;
 
-import at.ac.fhcampuswien.usermanager.entity.UserDto;
 import at.ac.fhcampuswien.usermanager.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
+import usermanager.v1.model.CreateUser;
 import usermanager.v1.model.User;
 
 import javax.validation.Valid;
@@ -24,14 +23,13 @@ public class UserController implements usermanager.v1.api.UserApi {
     }
 
     @Override
-    public ResponseEntity<User> createUser(User user) {
-        validateUser(user);
+    public ResponseEntity<User> createUser(CreateUser user) {
 
         return ResponseEntity.ok(userService.addUser(user));
     }
 
     @Override
-    public ResponseEntity<User> createUsersWithListInput(@Valid List<User> UserDto) {
+    public ResponseEntity<User> createUsersWithListInput(@Valid List<CreateUser> UserDto) {
         return null;
     }
 
@@ -57,7 +55,7 @@ public class UserController implements usermanager.v1.api.UserApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateUser(String username, User user) {
+    public ResponseEntity<Void> updateUser(String username, CreateUser user) {
         return null;
     }
 

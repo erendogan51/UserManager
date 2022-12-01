@@ -29,7 +29,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/CreateUser'
       responses:
         default:
           description: successful operation
@@ -50,7 +50,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/CreateUser'
       responses:
         '200':
           description: Successful operation
@@ -157,7 +157,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/CreateUser'
       responses:
         default:
           description: successful operation
@@ -181,6 +181,23 @@ paths:
           description: User not found
 components:
   schemas:
+    CreateUser:
+      type: object
+      properties:
+        username:
+          type: string
+          example: theUser
+          nullable: false
+        firstName:
+          type: string
+          example: John
+          nullable: false
+        lastName:
+          type: string
+          example: James
+        password:
+          type: string
+          example: '12345'
     User:
       type: object
       properties:
