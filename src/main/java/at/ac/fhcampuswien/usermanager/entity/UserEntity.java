@@ -25,5 +25,6 @@ public class UserEntity {
     private String username;
     private String password;
 
+    private Long loginCounter = 3L;
     public UserEntity() {}
 }

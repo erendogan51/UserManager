@@ -14,8 +14,6 @@ import usermanager.v1.model.User;
 public class UserService {
     private final UserRepository userRepository;
 
-    private static int loginCounter = 3;
-
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -34,15 +32,14 @@ public class UserService {
     }
 
     public String loginUser(String username, String password) {
-        // FIXME: when user does not exists > NullPointer
-        boolean isUserExists = userRepository.existsByUsername(username);
-        boolean isPasswordMatched = encoder().matches(password, userRepository.findUsersByUsername(username).getPassword());
 
-        if (!isUserExists || !isPasswordMatched) {
-            loginCounter--;
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password incorrect! Retries left: " + loginCounter);
+        if (!userRepository.existsByUsername(username)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password incorrect! Retries left: ");
+        } else {
+            if (!encoder().matches(password, userRepository.findUsersByUsername(username).getPassword())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password incorrect! Retries left: ");
+            }
         }
-        loginCounter = 3;
         return "logged in!";
     }
 
@@ -70,10 +67,6 @@ public class UserService {
                 .lastName(userEntity.getLastName())
                 .username(userEntity.getUsername())
                 .password(userEntity.getPassword());
-    }
-
-    private boolean isBlocked() {
-        return loginCounter == 0;
     }
 
 }
