@@ -90,7 +90,7 @@ public class UserService {
     }
 
     private boolean checkLoginAttempt(UserEntity userEntity) {
-        if (userEntity.getLoginCounter() > 0) {
+        if (userEntity.getLoginCounter() <= 0) {
             // TODO: timer for 60sec for the first time
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN, "User is blocked");
