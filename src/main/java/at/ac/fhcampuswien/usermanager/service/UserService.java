@@ -1,13 +1,13 @@
 package at.ac.fhcampuswien.usermanager.service;
 
-import at.ac.fhcampuswien.usermanager.entity.User;
+import at.ac.fhcampuswien.usermanager.entity.UserDto;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import usermanager.v1.model.NewUser;
+import usermanager.v1.model.User;
 
 @Service
 public class UserService {
@@ -21,13 +21,12 @@ public class UserService {
         return new BCryptPasswordEncoder();
     }
 
-    public User addUser(NewUser newUser) {
-        if (userRepository.existsByUsername(newUser.getUsername())) {
+    public User addUser(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "given username is already taken");
         }
-        var user = toUser(newUser);
-        userRepository.save(user);
+        userRepository.save(toUserDto(user));
         return user;
     }
 
@@ -40,21 +39,17 @@ public class UserService {
         return "logged in!";
     }
 
-    private User toUser(NewUser newUser) {
-        var user = new User();
-        user.setFirstName(newUser.getFirstName());
-        user.setLastName(newUser.getLastName());
-        user.setUsername(newUser.getUsername());
-        user.setPassword(encoder().encode(newUser.getPassword()));
-
-        return user;
+    private UserDto toUserDto(User user) {
+        var userDto = new UserDto();
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setUsername(user.getUsername());
+        userDto.setPassword(encoder().encode(user.getPassword()));
+        return userDto;
     }
 
-    private usermanager.v1.model.NewUser toNewUser(User user) {
-        return new NewUser()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .username(user.getUsername());
+    private User toUser(UserDto userDto) {
+        return new User().firstName(userDto.getFirstName()).lastName(userDto.getLastName()).password(userDto.getPassword()).username(userDto.getPassword());
     }
 
     public User getUserByName(String username) {

@@ -29,23 +29,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewUser'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/NewUser'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/NewUser'
+              $ref: '#/components/schemas/User'
       responses:
         default:
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewUser'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/NewUser'
+                $ref: '#/components/schemas/User'
   /user/createWithList:
     post:
       tags:
@@ -59,17 +50,14 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/NewUser'
+                $ref: '#/components/schemas/User'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewUser'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/NewUser'
+                $ref: '#/components/schemas/User'
         default:
           description: successful operation
   /user/login:
@@ -146,10 +134,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NewUser'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/NewUser'
+                $ref: '#/components/schemas/User'
         '400':
           description: Invalid username supplied
         '404':
@@ -172,13 +157,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewUser'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/NewUser'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/NewUser'
+              $ref: '#/components/schemas/User'
       responses:
         default:
           description: successful operation
@@ -202,7 +181,7 @@ paths:
           description: User not found
 components:
   schemas:
-    NewUser:
+    User:
       type: object
       properties:
         username:

@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Table(name = "userDb") // avoid using SQL Reserved Words and Keywords
-public class User {
+public class UserDto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,5 +25,5 @@ public class User {
     private String username;
     private String password;
 
-    public User() {}
+    public UserDto() {}
 }

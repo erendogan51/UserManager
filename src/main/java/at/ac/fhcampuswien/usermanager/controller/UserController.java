@@ -1,14 +1,17 @@
 package at.ac.fhcampuswien.usermanager.controller;
 
-import at.ac.fhcampuswien.usermanager.entity.User;
+import at.ac.fhcampuswien.usermanager.entity.UserDto;
 import at.ac.fhcampuswien.usermanager.service.UserService;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
-import usermanager.v1.model.NewUser;
+import usermanager.v1.model.User;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping(path = "/user")
@@ -21,14 +24,14 @@ public class UserController implements usermanager.v1.api.UserApi {
     }
 
     @Override
-    public ResponseEntity<User> createUser(NewUser newUser) {
-        validateUser(newUser);
+    public ResponseEntity<User> createUser(User user) {
+        validateUser(user);
 
-        return ResponseEntity.ok(userService.addUser(newUser));
+        return ResponseEntity.ok(userService.addUser(user));
     }
 
     @Override
-    public ResponseEntity<NewUser> createUsersWithListInput(List<NewUser> newUser) {
+    public ResponseEntity<User> createUsersWithListInput(@Valid List<User> UserDto) {
         return null;
     }
 
@@ -54,11 +57,11 @@ public class UserController implements usermanager.v1.api.UserApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateUser(String username, NewUser newUser) {
+    public ResponseEntity<Void> updateUser(String username, User user) {
         return null;
     }
 
-    private void validateUser(NewUser user) {
+    private void validateUser(User user) {
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user cannot be null");
         }
