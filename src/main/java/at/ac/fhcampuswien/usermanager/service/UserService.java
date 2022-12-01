@@ -10,6 +10,8 @@ import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.CreateUser;
 import usermanager.v1.model.User;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 @Service
@@ -17,6 +19,7 @@ public class UserService {
 
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private final UserRepository userRepository;
+    private boolean loginBlocked = false;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -36,19 +39,55 @@ public class UserService {
     }
 
     public String loginUser(String username, String password) {
-        if (!userRepository.existsByUsername(username)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password incorrect! Retries left: ");
-        } else {
+
+        if (loginBlocked) {
+            logger.warning("Login is blocked, try again later.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login is blocked, try again later.");
+        }
+
+        if (ValidateCridentials(username, password)) {
             var userEntity = userRepository.findUsersByUsername(username);
-            checkLoginAttempt(userEntity);
-            decreaseLoginAttempt(userEntity);
-            if (!encoder().matches(password, userRepository.findUsersByUsername(username).getPassword())) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password incorrect! Retries left: ");
-            }
             resetLoginAttempt(userEntity);
             return "logged in!";
         }
 
+        if (userRepository.existsByUsername(username)) {
+            var userEntity = userRepository.findUsersByUsername(username);
+            decreaseLoginAttempt(userEntity);
+
+            if (hasNoMoreLoginAttempts(userEntity)) {
+                disableLoginMethod();
+                Timer timer = new Timer();
+
+                TimerTask tt = new TimerTask() {
+                    @Override
+                    public void run() {
+                        resetLoginAttempt(userEntity);
+                        reEnableLoginMethod();
+                    }
+                };
+
+                int delay60Seconds = 1000 * 60;
+                timer.schedule(tt, delay60Seconds);
+            }
+        }
+        return "Username or Password are invalid.";
+    }
+
+    private boolean ValidateCridentials(String username, String password) {
+
+        boolean userExists = userRepository.existsByUsername(username);
+        if (!userExists) {
+            return false;
+        }
+
+        boolean passwordCorrect = encoder().matches(password, userRepository.findUsersByUsername(username).getPassword());
+        return passwordCorrect;
+    }
+
+
+    private boolean hasNoMoreLoginAttempts(UserEntity userEntity) {
+        return userEntity.getLoginCounter() == 0;
     }
 
     public User getUserByName(String username) {
@@ -89,13 +128,12 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
-    private boolean checkLoginAttempt(UserEntity userEntity) {
-        if (userEntity.getLoginCounter() <= 0) {
-            // TODO: timer for 60sec for the first time
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "User is blocked");
-        } else {
-            return true;
-        }
+    private void disableLoginMethod() {
+        loginBlocked = true;
+    }
+
+    private void reEnableLoginMethod() {
+        logger.warning("re enabled");
+        loginBlocked = false;
     }
 }
