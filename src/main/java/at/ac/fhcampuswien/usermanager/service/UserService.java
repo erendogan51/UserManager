@@ -59,7 +59,10 @@ public class UserService {
     }
 
     public User getUserByName(String username) {
-
+        if (!userRepository.existsByUsername(username)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "User not found");
+        }
         return toUser(userRepository.findUsersByUsername(username));
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
+import usermanager.v1.api.UserApi;
 import usermanager.v1.model.CreateUser;
 import usermanager.v1.model.User;
 
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(path = "/user")
-public class UserController implements usermanager.v1.api.UserApi {
+public class UserController implements UserApi {
 
     private final UserService userService;
 
