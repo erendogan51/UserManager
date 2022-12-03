@@ -63,9 +63,9 @@ TBD
   name or password incorrect".
 - [x] 202 The system must offer the user three attempts to log in before the corresponding user name is blocked for 60
   seconds after the fourth, incorrect attempt.
-- [ ] 203 If the user attempts to log in while the username is locked, the error message 'User locked until DD.MM.YYYY
+- [x] 203 If the user attempts to log in while the username is locked, the error message 'User locked until DD.MM.YYYY
   at hh:mm' shall be displayed.
-- [ ] 204 When the user is logged in, the system shall allow the user to log out.
+- [x] 204 When the user is logged in, the system shall allow the user to log out.
 
 **Password Change**
 

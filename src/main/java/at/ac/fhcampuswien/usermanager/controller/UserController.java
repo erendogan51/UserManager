@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.usermanager.controller;
 import at.ac.fhcampuswien.usermanager.service.UserService;
 import java.util.List;
 import javax.validation.Valid;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -50,8 +51,18 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<Void> logoutUser() {
-        return null;
+    public ResponseEntity<Void> logoutUser(String username, String password) {
+        if (StringUtils.isBlank(username)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is invalid");
+        }
+
+        if (StringUtils.isBlank(password)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is invalid");
+        }
+
+        userService.logoutUser(username, password);
+
+        return ResponseEntity.noContent().build();
     }
 
     @Override

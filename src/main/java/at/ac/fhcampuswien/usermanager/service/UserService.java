@@ -4,8 +4,6 @@ import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -44,7 +42,11 @@ public class UserService {
 
         if (user == null) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Username or password is invalid.");
+                    HttpStatus.NOT_FOUND, "Username or password is invalid.");
+        }
+
+        if (user.isLoggedIn()) {
+            return "You are already logged in.";
         }
 
         if (user.getBlockedUntil() != null && user.getBlockedUntil().isAfter(Instant.now())) {
@@ -116,6 +118,31 @@ public class UserService {
     private void resetLoginAttempt(UserEntity userEntity) {
         userEntity.setLoginCounter(3L);
         userEntity.setBlockedUntil(null);
+        userEntity.setLoggedIn(true);
         userRepository.save(userEntity);
+    }
+
+    public void logoutUser(String username, String password) {
+        var user = userRepository.findUsersByUsername(username);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+        }
+
+        if (!user.isLoggedIn()) {
+            return;
+        }
+
+        if (validateCredentials(user, password)) {
+            logoutUser(user);
+            return;
+        }
+
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Username or password is invalid.");
+    }
+
+    private void logoutUser(UserEntity user) {
+        user.setLoggedIn(false);
+        userRepository.save(user);
     }
 }

@@ -95,6 +95,8 @@ paths:
                 type: string
         '401':
           description: Invalid username/password supplied
+        default:
+          description: error
   /user/logout:
     get:
       tags:
@@ -102,7 +104,19 @@ paths:
       summary: Logs out current logged in user session
       description: ''
       operationId: logoutUser
-      parameters: [ ]
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login
+          required: false
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: false
+          schema:
+            type: string
       responses:
         default:
           description: successful operation

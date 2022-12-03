@@ -32,4 +32,5 @@ public class UserEntity {
     private String password;
     private Long loginCounter;
     private Instant blockedUntil;
+    private boolean loggedIn;
 }
