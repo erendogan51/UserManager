@@ -61,7 +61,7 @@ TBD
 - [x] 200 The system must offer the user the option of logging in with a user name and password.
 - [x] 201 If the user name or password does not match the stored data, the system shall output the error message "User
   name or password incorrect".
-- [ ] 202 The system must offer the user three attempts to log in before the corresponding user name is blocked for 60
+- [x] 202 The system must offer the user three attempts to log in before the corresponding user name is blocked for 60
   seconds after the fourth, incorrect attempt.
 - [ ] 203 If the user attempts to log in while the username is locked, the error message 'User locked until DD.MM.YYYY
   at hh:mm' shall be displayed.

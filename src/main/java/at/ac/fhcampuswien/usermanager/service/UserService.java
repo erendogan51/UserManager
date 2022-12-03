@@ -2,6 +2,11 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,10 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.CreateUser;
 import usermanager.v1.model.User;
-
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Logger;
 
 @Service
 public class UserService {
@@ -39,61 +40,39 @@ public class UserService {
     }
 
     public String loginUser(String username, String password) {
+        var user = userRepository.findUsersByUsername(username);
 
-        if (loginBlocked) {
-            logger.warning("Login is blocked, try again later.");
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login is blocked, try again later.");
+        if (user == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Username or password is invalid.");
         }
 
-        if (ValidateCridentials(username, password)) {
-            var userEntity = userRepository.findUsersByUsername(username);
-            resetLoginAttempt(userEntity);
+        if (user.getBlockedUntil() != null && user.getBlockedUntil().isAfter(Instant.now())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Login for this user is blocked until: " + user.getBlockedUntil());
+        }
+
+        if (validateCredentials(user, password)) {
+            resetLoginAttempt(user);
             return "logged in!";
         }
 
-        if (userRepository.existsByUsername(username)) {
-            var userEntity = userRepository.findUsersByUsername(username);
-            decreaseLoginAttempt(userEntity);
+        decreaseLoginAttempt(user);
 
-            if (hasNoMoreLoginAttempts(userEntity)) {
-                disableLoginMethod();
-                Timer timer = new Timer();
-
-                TimerTask tt = new TimerTask() {
-                    @Override
-                    public void run() {
-                        resetLoginAttempt(userEntity);
-                        reEnableLoginMethod();
-                    }
-                };
-
-                int delay60Seconds = 1000 * 60;
-                timer.schedule(tt, delay60Seconds);
-            }
-        }
-        return "Username or Password are invalid.";
+        return "Username or password is invalid.";
     }
 
-    private boolean ValidateCridentials(String username, String password) {
-
-        boolean userExists = userRepository.existsByUsername(username);
-        if (!userExists) {
+    private boolean validateCredentials(UserEntity user, String password) {
+        if (user == null) {
             return false;
         }
-
-        boolean passwordCorrect = encoder().matches(password, userRepository.findUsersByUsername(username).getPassword());
-        return passwordCorrect;
-    }
-
-
-    private boolean hasNoMoreLoginAttempts(UserEntity userEntity) {
-        return userEntity.getLoginCounter() == 0;
+        return encoder().matches(password, user.getPassword());
     }
 
     public User getUserByName(String username) {
         if (!userRepository.existsByUsername(username)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         return toUser(userRepository.findUsersByUsername(username));
     }
@@ -117,23 +96,26 @@ public class UserService {
                 .password(userEntity.getPassword());
     }
 
-    private void decreaseLoginAttempt(UserEntity userEntity) {
-        userEntity.setLoginCounter(userEntity.getLoginCounter() - 1);
-        userRepository.save(userEntity);
-        logger.warning("False login Attempt! User: " + userEntity.getUsername() + " Attempt Left: " + userEntity.getLoginCounter());
+    private void decreaseLoginAttempt(UserEntity user) {
+        if (user.getLoginCounter() == 0 && user.getBlockedUntil() == null) {
+            user.setBlockedUntil(Instant.now().plus(1, ChronoUnit.MINUTES));
+            userRepository.save(user);
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Login for this user is blocked for 1 minute");
+        }
+
+        user.setLoginCounter(user.getLoginCounter() - 1);
+        userRepository.save(user);
+        logger.warning(
+                "False login Attempt! User: "
+                        + user.getUsername()
+                        + " Attempt Left: "
+                        + user.getLoginCounter());
     }
 
     private void resetLoginAttempt(UserEntity userEntity) {
         userEntity.setLoginCounter(3L);
+        userEntity.setBlockedUntil(null);
         userRepository.save(userEntity);
-    }
-
-    private void disableLoginMethod() {
-        loginBlocked = true;
-    }
-
-    private void reEnableLoginMethod() {
-        logger.warning("re enabled");
-        loginBlocked = false;
     }
 }

@@ -1,6 +1,8 @@
 package at.ac.fhcampuswien.usermanager.controller;
 
 import at.ac.fhcampuswien.usermanager.service.UserService;
+import java.util.List;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,11 +12,7 @@ import usermanager.v1.api.UserApi;
 import usermanager.v1.model.CreateUser;
 import usermanager.v1.model.User;
 
-import javax.validation.Valid;
-import java.util.List;
-
 @Controller
-@RequestMapping(path = "/user")
 public class UserController implements UserApi {
 
     private final UserService userService;

@@ -2,17 +2,9 @@ openapi: 3.0.3
 info:
   title: User Manager
   description: Project for Advanced Software Development
-  contact:
-    email: apiteam@swagger.io
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.11
-externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
+  version: 1.0.1
 servers:
-  - url: https://petstore3.swagger.io/api/v3
+  - url: http://localhost:8080
 tags:
   - name: user
     description: Operations about user
@@ -110,7 +102,7 @@ paths:
       summary: Logs out current logged in user session
       description: ''
       operationId: logoutUser
-      parameters: []
+      parameters: [ ]
       responses:
         default:
           description: successful operation
