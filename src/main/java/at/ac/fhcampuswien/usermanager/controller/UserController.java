@@ -1,13 +1,14 @@
 package at.ac.fhcampuswien.usermanager.controller;
 
+import at.ac.fhcampuswien.usermanager.service.AuthenticationService;
 import at.ac.fhcampuswien.usermanager.service.UserService;
+import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.api.UserApi;
 import usermanager.v1.model.CreateUser;
@@ -17,21 +18,28 @@ import usermanager.v1.model.User;
 public class UserController implements UserApi {
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AuthenticationService authenticationService) {
         this.userService = userService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
     public ResponseEntity<User> createUser(CreateUser user) {
         validateUser(user);
 
-        return ResponseEntity.ok(userService.addUser(user));
+        return ResponseEntity.ok(authenticationService.addUser(user));
     }
 
     @Override
-    public ResponseEntity<User> createUsersWithListInput(@Valid List<CreateUser> UserDto) {
-        return null;
+    public ResponseEntity<List<User>> createUsersWithListInput(@Valid List<CreateUser> users) {
+        var rsp = new ArrayList<User>();
+        for (var u : users) {
+            rsp.add(authenticationService.addUser(u));
+        }
+
+        return ResponseEntity.ok(rsp);
     }
 
     @Override
@@ -47,7 +55,7 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<String> loginUser(String username, String password) {
-        return ResponseEntity.ok(userService.loginUser(username, password));
+        return ResponseEntity.ok(authenticationService.loginUser(username, password));
     }
 
     @Override
@@ -60,7 +68,7 @@ public class UserController implements UserApi {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is invalid");
         }
 
-        userService.logoutUser(username, password);
+        authenticationService.logoutUser(username, password);
 
         return ResponseEntity.noContent().build();
     }
