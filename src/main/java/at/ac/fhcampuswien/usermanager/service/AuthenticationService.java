@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.security.ErrorResponseException;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -113,9 +114,8 @@ public class AuthenticationService {
         return "Password changed. Please login again and retrieve a new token.";
     }
 
-    public void deleteUser(String username, String password) {
+    public String deleteUser(String username, String password) {
         var user = getLoggedInUser();
-
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
@@ -126,6 +126,7 @@ public class AuthenticationService {
         SecurityContextHolder.clearContext();
         authTokenService.removeToken(user);
         userService.deleteUser(username);
+        return "Delete user success";
     }
 
     private void logoutUser(UserEntity user) {
@@ -171,10 +172,10 @@ public class AuthenticationService {
         userService.saveUser(userEntity);
     }
 
-    protected Instant handleActivity(UserEntity user) {
+    protected void handleActivity(UserEntity user) {
         if (Duration.between(user.getLastActivity(), Instant.now()).getSeconds() >= 120) {
             logoutUser(user);
         }
-        return userService.saveActivity(user).getLastActivity();
+        userService.saveActivity(user);
     }
 }
