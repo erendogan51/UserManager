@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class AuthenticationService {
     private static final Logger logger = Logger.getLogger(AuthenticationService.class.getName());
+    private static final String INVALID_CREDS_MSG = "Username or password is invalid.";
 
     private final UserService userService;
     private final AuthTokenService authTokenService;
@@ -37,7 +38,7 @@ public class AuthenticationService {
         var existingUser = userService.getUserEntityByName(user.getUsername());
         if (existingUser != null) {
             throw new ResponseStatusException(
-                    HttpStatus.CONFLICT, "given username is already taken");
+                    HttpStatus.CONFLICT, "Given username is already taken.");
         }
 
         var userEntity = toUserEntity(user);
@@ -51,7 +52,7 @@ public class AuthenticationService {
         var user = userService.getUserEntityByName(username);
         if (user == null) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Username or password is invalid.");
+                    HttpStatus.NOT_FOUND, INVALID_CREDS_MSG);
         }
 
         if (user.isLoggedIn()) {
@@ -60,7 +61,7 @@ public class AuthenticationService {
 
         if (user.getBlockedUntil() != null && user.getBlockedUntil().isAfter(Instant.now())) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
+                    HttpStatus.UNAUTHORIZED,
                     "Login for this user is blocked until: " + user.getBlockedUntil());
         }
 
@@ -70,7 +71,7 @@ public class AuthenticationService {
         if (authentication == null) {
             decreaseLoginAttempt(user);
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Username or password is invalid.");
+                    HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -79,13 +80,18 @@ public class AuthenticationService {
                 (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         resetLoginAttempt(user);
 
-        return "user :" + auth.getUsername() + "logged in";
+        return "user :" + auth.getUsername() + " logged in";
     }
 
     public void logoutUser(String username, String password) {
         var user = userService.getUserEntityByName(username);
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, INVALID_CREDS_MSG);
+        }
+
+        if (!validateCredentials(user, password)) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, INVALID_CREDS_MSG);
         }
 
         if (!user.isLoggedIn()) {
@@ -98,7 +104,7 @@ public class AuthenticationService {
         }
 
         throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Username or password is invalid.");
+                HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
     }
 
     private void logoutUser(UserEntity user) {

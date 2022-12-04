@@ -53,7 +53,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return blockedUntil != null;
+        return true;
     }
 
     @Override
@@ -63,6 +63,6 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return blockedUntil != null;
+        return true;
     }
 }
