@@ -40,6 +40,7 @@ public class AuthenticationService {
         }
 
         var userEntity = toUserEntity(user);
+        userEntity.setLastActivity(Instant.now());
         userService.saveUser(userEntity);
 
         return userService.toUser(userEntity);
