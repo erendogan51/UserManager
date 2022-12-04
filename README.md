@@ -35,7 +35,7 @@ mvn clean install
 
 `UserManagerApplication.main()`
 
-### Launch GUI
+### Usage
 
 - Launch Browser
 - Open http://localhost:8080/swagger.html
@@ -43,10 +43,6 @@ mvn clean install
 - Login via the /login endpoint to retrieve a authentication token
 - Enter the token via `Authorize` button for any other request 
 ---
-
-## Features
-
-TBD
 
 ## Requirements
 
@@ -102,7 +98,7 @@ TBD
 ### Extensions (optional)
 
 - [x] 600 The system can be interacted with using a GUI.
-- [ ] 601 The system must automatically log off the user after 120 seconds of inactivity.
+- [x] 601 The system must automatically log off the user after 120 seconds of inactivity.
 
 ---
 
