@@ -1,16 +1,14 @@
 package at.ac.fhcampuswien.usermanager.config;
 
-import org.springdoc.core.GroupedOpenApi;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SpringDocConfig {
+
     @Bean
-    public GroupedOpenApi publicApi() {
-        return GroupedOpenApi.builder()
-                .group("ASD_User_Manager")
-                .pathsToMatch("**/auth/**", "**/user/**")
-                .build();
+    public OpenAPI swagger() {
+        return new OpenAPI();
     }
 }
