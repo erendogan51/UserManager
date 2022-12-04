@@ -1,7 +1,7 @@
 package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
-
+import at.ac.fhcampuswien.usermanager.security.ErrorResponseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.logging.Logger;
@@ -53,7 +53,7 @@ public class AuthenticationService {
     public String loginUser(String username, String password) {
         var user = userService.getUserEntityByName(username);
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, INVALID_CREDS_MSG);
+            throw new ErrorResponseException(HttpStatus.NOT_FOUND, INVALID_CREDS_MSG);
         }
 
         if (user.isLoggedIn()) {
@@ -61,7 +61,7 @@ public class AuthenticationService {
         }
 
         if (user.getBlockedUntil() != null && user.getBlockedUntil().isAfter(Instant.now())) {
-            throw new ResponseStatusException(
+            throw new ErrorResponseException(
                     HttpStatus.UNAUTHORIZED,
                     "Login for this user is blocked until: " + user.getBlockedUntil());
         }
@@ -73,11 +73,11 @@ public class AuthenticationService {
 
         } catch (Exception e) {
             decreaseLoginAttempt(user);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
+            throw new ErrorResponseException(HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
         }
         if (authentication == null) {
             decreaseLoginAttempt(user);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
+            throw new ErrorResponseException(HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -90,7 +90,7 @@ public class AuthenticationService {
         UserEntity user = getLoggedInUser();
 
         if (!user.isLoggedIn()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, NOT_LOGGED_IN);
+            throw new ErrorResponseException(HttpStatus.UNAUTHORIZED, NOT_LOGGED_IN);
         }
 
         if (user.getUsername().equals(username)) {
@@ -100,14 +100,14 @@ public class AuthenticationService {
             return;
         }
 
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
+        throw new ErrorResponseException(HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
     }
 
     public String updatePassword(String username, String newPassword) {
         UserEntity user = getLoggedInUser();
 
         if (!user.getUsername().equals(username)) {
-            throw new ResponseStatusException(
+            throw new ErrorResponseException(
                     HttpStatus.UNAUTHORIZED,
                     "You are not allowed to change the password of this user.");
         }
@@ -120,7 +120,7 @@ public class AuthenticationService {
     private UserEntity getLoggedInUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName().equals("anonymousUser")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, NOT_LOGGED_IN);
+            throw new ErrorResponseException(HttpStatus.UNAUTHORIZED, NOT_LOGGED_IN);
         }
         return (UserEntity) authentication.getPrincipal();
     }
@@ -139,7 +139,7 @@ public class AuthenticationService {
         if (user.getLoginCounter() == 0 && user.getBlockedUntil() == null) {
             user.setBlockedUntil(Instant.now().plus(1, ChronoUnit.MINUTES));
             userService.saveUser(user);
-            throw new ResponseStatusException(
+            throw new ErrorResponseException(
                     HttpStatus.BAD_REQUEST, "Login for this user is blocked for 1 minute");
         }
 
