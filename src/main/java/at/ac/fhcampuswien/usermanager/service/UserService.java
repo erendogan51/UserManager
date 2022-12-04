@@ -3,6 +3,11 @@ package at.ac.fhcampuswien.usermanager.service;
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
 import at.ac.fhcampuswien.usermanager.security.ErrorResponseException;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.logging.Logger;
+import javax.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -54,7 +59,8 @@ public class UserService implements UserDetailsService {
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
                 .username(userEntity.getUsername())
-                .password(userEntity.getPassword());
+                .password(userEntity.getPassword())
+                .lastActivity(Date.from(userEntity.getLastActivity()));
     }
 
     protected void logoutUser(UserEntity user) {

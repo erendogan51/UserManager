@@ -249,6 +249,9 @@ components:
         password:
           type: string
           example: '12345'
+        lastActivity:
+          type: string
+          format: date-time
     Response:
       type: object
       properties:
