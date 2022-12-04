@@ -40,7 +40,7 @@ public class AuthenticationService {
     public usermanager.v1.model.User addUser(usermanager.v1.model.CreateUser user) {
         var existingUser = userService.getUserEntityByName(user.getUsername());
         if (existingUser != null) {
-            throw new ResponseStatusException(
+            throw new ErrorResponseException(
                     HttpStatus.CONFLICT, "The user name is already taken");
         }
 
