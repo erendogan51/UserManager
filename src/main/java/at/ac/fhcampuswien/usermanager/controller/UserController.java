@@ -28,7 +28,6 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<User> createUser(CreateUser user) {
         validateUser(user);
-
         return ResponseEntity.ok(authenticationService.addUser(user));
     }
 

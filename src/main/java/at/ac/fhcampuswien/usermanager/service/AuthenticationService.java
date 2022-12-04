@@ -43,7 +43,7 @@ public class AuthenticationService {
         }
 
         var userEntity = toUserEntity(user);
-        userService.addUser(userEntity);
+        userService.saveUser(userEntity);
 
         return userService.toUser(userEntity);
     }
@@ -87,7 +87,8 @@ public class AuthenticationService {
 
         if (user.getUsername().equals(username)) {
             SecurityContextHolder.clearContext();
-            userService.logoutUser(username);
+            userService.logoutUser(user);
+            authTokenService.removeToken(user);
             return;
         }
 
@@ -129,13 +130,13 @@ public class AuthenticationService {
     private void decreaseLoginAttempt(UserEntity user) {
         if (user.getLoginCounter() == 0 && user.getBlockedUntil() == null) {
             user.setBlockedUntil(Instant.now().plus(1, ChronoUnit.MINUTES));
-            userService.addUser(user);
+            userService.saveUser(user);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Login for this user is blocked for 1 minute");
         }
 
         user.setLoginCounter(user.getLoginCounter() - 1);
-        userService.addUser(user);
+        userService.saveUser(user);
         logger.warning(
                 "False login Attempt! User: "
                         + user.getUsername()
@@ -147,6 +148,6 @@ public class AuthenticationService {
         userEntity.setLoginCounter(3L);
         userEntity.setBlockedUntil(null);
         userEntity.setLoggedIn(true);
-        userService.addUser(userEntity);
+        userService.saveUser(userEntity);
     }
 }

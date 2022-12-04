@@ -69,7 +69,7 @@ TBD
 
 **Password Change**
 
-- [ ] 300 If the user is logged in, the system shall allow the user to change his/her password.
+- [x] 300 If the user is logged in, the system shall allow the user to change his/her password.
 - [ ] 301 If the password is to be changed, the user shall re-enter his/her password for confirmation.
 - [ ] 302 If the entered password does not match the current password, the system shall display the error message "
   Password is not correct".

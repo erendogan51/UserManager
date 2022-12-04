@@ -50,11 +50,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
-        </dependency>
         <!--- swagger -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -102,7 +97,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/swagger.yaml
+                            <inputSpec>${project.basedir}/src/main/resources/static/swagger.yaml
                             </inputSpec>
                             <ignoreFileOverride>
                                 ${project.basedir}/src/main/resources/.openapi-generator-ignore

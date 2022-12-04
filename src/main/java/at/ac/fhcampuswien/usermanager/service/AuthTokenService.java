@@ -39,4 +39,8 @@ public class AuthTokenService {
     public Optional<AuthToken> findByToken(String token) {
         return authTokenRepository.findByToken(token);
     }
+
+    public void removeToken(UserEntity user) {
+        authTokenRepository.deleteAuthTokenByUser(user);
+    }
 }

@@ -20,7 +20,7 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
-    protected UserEntity addUser(UserEntity user) {
+    protected UserEntity saveUser(UserEntity user) {
         return userRepository.save(user);
     }
 
@@ -54,8 +54,9 @@ public class UserService implements UserDetailsService {
                 .username(userEntity.getUsername());
     }
 
-    protected void logoutUser(String user) {
-        userRepository.updateLogin(user, false);
+    protected void logoutUser(UserEntity user) {
+        user.setLoggedIn(false);
+        userRepository.save(user);
     }
 
     public void updatePassword(String username, String encodedPassword) {
@@ -65,6 +66,6 @@ public class UserService implements UserDetailsService {
         }
 
         user.setPassword(encodedPassword);
-        addUser(user);
+        saveUser(user);
     }
 }
