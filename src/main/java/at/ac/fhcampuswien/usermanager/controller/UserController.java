@@ -32,11 +32,13 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<String> deleteUser(String username, String password) {
         validateUsername(username);
+        validatePassword(password);
         return ResponseEntity.ok(authenticationService.deleteUser(username, password));
     }
 
     @Override
     public ResponseEntity<User> getUserByName(String username) {
+        validateUsername(username);
         return ResponseEntity.ok(userService.getUserByName(username));
     }
 
@@ -59,6 +61,7 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<String> updatePassword(String username, NewPassword newPassword) {
+        validateUsername(username);
         return ResponseEntity.ok(authenticationService.updatePassword(username, newPassword));
     }
 
@@ -70,7 +73,7 @@ public class UserController implements UserApi {
 
     private void validatePassword(String password) {
         if (StringUtils.isBlank(password)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is invalid");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is invalid");
         }
     }
 
