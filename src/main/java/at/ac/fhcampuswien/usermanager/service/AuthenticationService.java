@@ -95,9 +95,7 @@ public class AuthenticationService {
         }
 
         if (user.getUsername().equals(username)) {
-            SecurityContextHolder.clearContext();
-            userService.logoutUser(user);
-            authTokenService.removeToken(user);
+            logoutUser(user);
             return;
         }
 
@@ -124,18 +122,26 @@ public class AuthenticationService {
     }
 
     public void deleteUser(String username, String password) {
-        getLoggedInUser();
+        var user = getLoggedInUser();
 
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password));
 
         } catch (Exception e) {
-            throw new ErrorResponseException(HttpStatus.BAD_REQUEST, "Password is incorrect");
+            throw new ErrorResponseException(
+                    HttpStatus.BAD_REQUEST, "Password is incorrect or user does not exist");
         }
 
-        logoutUser(username);
+        SecurityContextHolder.clearContext();
+        authTokenService.removeToken(user);
         userService.deleteUser(username);
+    }
+
+    private void logoutUser(UserEntity user) {
+        SecurityContextHolder.clearContext();
+        userService.logoutUser(user);
+        authTokenService.removeToken(user);
     }
 
     private UserEntity getLoggedInUser() {

@@ -5,6 +5,7 @@ import at.ac.fhcampuswien.usermanager.repository.UserRepository;
 import at.ac.fhcampuswien.usermanager.security.ErrorResponseException;
 import java.time.Instant;
 import java.util.logging.Logger;
+import javax.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
