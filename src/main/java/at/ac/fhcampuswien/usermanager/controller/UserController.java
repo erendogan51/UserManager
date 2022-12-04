@@ -2,9 +2,6 @@ package at.ac.fhcampuswien.usermanager.controller;
 
 import at.ac.fhcampuswien.usermanager.service.AuthenticationService;
 import at.ac.fhcampuswien.usermanager.service.UserService;
-import java.util.ArrayList;
-import java.util.List;
-import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,11 +54,6 @@ public class UserController implements UserApi {
         authenticationService.logoutUser(username);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @Override
-    public ResponseEntity<Void> updateUser(String username, CreateUser user) {
-        return null;
     }
 
     @Override

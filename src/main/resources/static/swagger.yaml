@@ -24,7 +24,7 @@ paths:
               $ref: '#/components/schemas/CreateUser'
       responses:
         '200':
-          description: successful operation
+          description: Create user success
           content:
             application/json:
               schema:
@@ -53,7 +53,7 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Login user success
           headers:
             X-Rate-Limit:
               description: calls per hour allowed by the user
@@ -88,8 +88,8 @@ paths:
           schema:
             type: string
       responses:
-        default:
-          description: successful operation
+        '200':
+          description: logged out success
   /user/{username}:
     get:
       tags:
@@ -108,7 +108,7 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Get user success
           content:
             application/json:
               schema:
@@ -117,30 +117,6 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
-    put:
-      tags:
-        - user
-      security:
-        - bearerAuth: [ ]
-      summary: Update user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - name: username
-          in: path
-          description: name that need to be deleted
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Update an existent user in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUser'
-      responses:
-        default:
-          description: successful operation
     delete:
       tags:
         - user
@@ -157,6 +133,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: Delete user success
         '400':
           description: Invalid username supplied
         '404':
@@ -186,7 +164,7 @@ paths:
               example: abc
       responses:
         '200':
-          description: successful operation
+          description: Change password success
           content:
             application/json:
               schema:
