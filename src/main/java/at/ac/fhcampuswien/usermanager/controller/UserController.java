@@ -30,10 +30,10 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteUser(String username, String password) {
+    public ResponseEntity<String> deleteUser(String username, String password) {
         validateUsername(username);
         authenticationService.deleteUser(username, password);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Delete user success");
     }
 
     @Override

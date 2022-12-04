@@ -163,6 +163,10 @@ paths:
       responses:
         '200':
           description: Delete user success
+          content:
+            text/plain:
+              schema:
+                type: string
         '400':
           description: Invalid username supplied
         '404':
