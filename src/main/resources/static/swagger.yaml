@@ -6,13 +6,13 @@ info:
 servers:
   - url: http://localhost:8080/api/v1
 tags:
-  - name: user
+  - name: User
     description: Operations about user
 paths:
   /user:
     post:
       tags:
-        - user
+        - User
       summary: Create user
       description: This can only be done by the logged in user.
       operationId: createUser
@@ -34,7 +34,7 @@ paths:
   /auth/login:
     post:
       tags:
-        - user
+        - User
       summary: Logs user into the system
       description: ''
       operationId: loginUser
@@ -74,7 +74,7 @@ paths:
   /auth/logout:
     post:
       tags:
-        - user
+        - User
       summary: Logs out current logged in user session
       description: ''
       operationId: logoutUser
@@ -91,7 +91,7 @@ paths:
   /user/{username}:
     get:
       tags:
-        - user
+        - User
       security:
         - bearerAuth: [ ]
       summary: Get user by user name
@@ -117,7 +117,7 @@ paths:
           description: User not found
     delete:
       tags:
-        - user
+        - User
       security:
         - bearerAuth: [ ]
       summary: Delete user
@@ -140,7 +140,7 @@ paths:
   /user/{username}/password:
     put:
       tags:
-        - user
+        - User
       security:
         - bearerAuth: [ ]
       summary: Change user password
