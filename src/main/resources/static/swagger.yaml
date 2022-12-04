@@ -71,6 +71,10 @@ paths:
                 type: string
         '401':
           description: Invalid username/password supplied
+          content:
+            text/plain:
+              schema:
+                type: string
         default:
           description: error
           content:
@@ -194,13 +198,13 @@ paths:
         '200':
           description: Change password success
           content:
-            application/json:
+            text/plain:
               schema:
                 type: string
         default:
           description: error
           content:
-            application/json:
+            text/plain:
               schema:
                 $ref: '#/components/schemas/Response'
 components:
