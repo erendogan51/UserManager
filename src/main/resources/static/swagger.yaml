@@ -6,13 +6,13 @@ info:
 servers:
   - url: http://localhost:8080/api/v1
 tags:
-  - name: user
+  - name: User
     description: Operations about user
 paths:
   /user:
     post:
       tags:
-        - user
+        - User
       summary: Create user
       description: This can only be done by the logged in user.
       operationId: createUser
@@ -23,47 +23,18 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateUser'
       responses:
+        '200':
+          description: Create user success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '409':
           description: username taken
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-  /user/createWithList:
-    post:
-      tags:
-        - user
-      summary: Creates list of users with given input array
-      description: Creates list of users with given input array
-      operationId: createUsersWithListInput
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/CreateUser'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-        default:
-          description: successful operation
   /auth/login:
     post:
       tags:
-        - user
+        - User
       summary: Logs user into the system
       description: ''
       operationId: loginUser
@@ -82,7 +53,7 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Login user success
           headers:
             X-Rate-Limit:
               description: calls per hour allowed by the user
@@ -100,12 +71,10 @@ paths:
                 type: string
         '401':
           description: Invalid username/password supplied
-        default:
-          description: error
   /auth/logout:
     post:
       tags:
-        - user
+        - User
       summary: Logs out current logged in user session
       description: ''
       operationId: logoutUser
@@ -117,12 +86,12 @@ paths:
           schema:
             type: string
       responses:
-        default:
-          description: successful operation
+        '200':
+          description: logged out success
   /user/{username}:
     get:
       tags:
-        - user
+        - User
       security:
         - bearerAuth: [ ]
       summary: Get user by user name
@@ -137,7 +106,7 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: Get user success
           content:
             application/json:
               schema:
@@ -146,33 +115,9 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
-    put:
-      tags:
-        - user
-      security:
-        - bearerAuth: [ ]
-      summary: Update user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - name: username
-          in: path
-          description: name that need to be deleted
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Update an existent user in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUser'
-      responses:
-        default:
-          description: successful operation
     delete:
       tags:
-        - user
+        - User
       security:
         - bearerAuth: [ ]
       summary: Delete user
@@ -186,14 +131,16 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: Delete user success
         '400':
           description: Invalid username supplied
         '404':
           description: User not found
-  /user/{username}/change_password:
+  /user/{username}/password:
     put:
       tags:
-        - user
+        - User
       security:
         - bearerAuth: [ ]
       summary: Change user password
@@ -215,13 +162,11 @@ paths:
               example: abc
       responses:
         '200':
-          description: successful operation
+          description: Change password success
           content:
             application/json:
               schema:
                 type: string
-        default:
-          description: error
 components:
   schemas:
     CreateUser:
