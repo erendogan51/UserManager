@@ -2,7 +2,7 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.security.ErrorResponseException;
-
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.logging.Logger;
@@ -51,6 +51,8 @@ public class AuthenticationService {
             throw new ErrorResponseException(HttpStatus.NOT_FOUND, INVALID_CREDS_MSG);
         }
 
+        handleActivity(user);
+
         if (user.isLoggedIn()) {
             return "You are already logged in. Your token was: " + authTokenService.retrieveToken(user).getToken();
         }
@@ -94,6 +96,7 @@ public class AuthenticationService {
 
     public String updatePassword(String username, usermanager.v1.model.NewPassword newPassword) {
         UserEntity user = getLoggedInUser();
+        handleActivity(user);
 
         if (!user.getUsername().equals(username)) {
             throw new ErrorResponseException(HttpStatus.UNAUTHORIZED, "You are not allowed to change the password of this user.");
@@ -167,7 +170,10 @@ public class AuthenticationService {
         userService.saveUser(userEntity);
     }
 
-    protected Instant saveActivity(UserEntity user) {
+    protected Instant handleActivity(UserEntity user) {
+        if (Duration.between(user.getLastActivity(), Instant.now()).getSeconds() >= 120) {
+            logoutUser(user);
+        }
         return userService.saveActivity(user).getLastActivity();
     }
 }
