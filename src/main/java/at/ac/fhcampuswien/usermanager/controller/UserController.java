@@ -32,16 +32,6 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<List<User>> createUsersWithListInput(@Valid List<CreateUser> users) {
-        var rsp = new ArrayList<User>();
-        for (var u : users) {
-            rsp.add(authenticationService.addUser(u));
-        }
-
-        return ResponseEntity.ok(rsp);
-    }
-
-    @Override
     public ResponseEntity<Void> deleteUser(String username) {
         validateUsername(username);
         return null;
