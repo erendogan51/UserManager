@@ -4,7 +4,7 @@ info:
   description: Project for Advanced Software Development
   version: 1.0.1
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8080/api/v1
 tags:
   - name: user
     description: Operations about user
@@ -54,8 +54,8 @@ paths:
                   $ref: '#/components/schemas/User'
         default:
           description: successful operation
-  /user/login:
-    get:
+  /auth/login:
+    post:
       tags:
         - user
       summary: Logs user into the system
@@ -99,8 +99,8 @@ paths:
           description: Invalid username/password supplied
         default:
           description: error
-  /user/logout:
-    get:
+  /auth/logout:
+    post:
       tags:
         - user
       summary: Logs out current logged in user session
@@ -108,15 +108,9 @@ paths:
       operationId: logoutUser
       parameters:
         - name: username
-          in: query
-          description: The user name for login
-          required: false
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: false
+          in: path
+          description: The username of the user to logout
+          required: true
           schema:
             type: string
       responses:

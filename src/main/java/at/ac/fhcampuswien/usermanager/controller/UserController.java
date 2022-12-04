@@ -59,16 +59,12 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<Void> logoutUser(String username, String password) {
+    public ResponseEntity<Void> logoutUser(String username) {
         if (StringUtils.isBlank(username)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is invalid");
         }
 
-        if (StringUtils.isBlank(password)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is invalid");
-        }
-
-        authenticationService.logoutUser(username, password);
+        authenticationService.logoutUser(username);
 
         return ResponseEntity.noContent().build();
     }

@@ -54,8 +54,7 @@ public class UserService implements UserDetailsService {
                 .username(userEntity.getUsername());
     }
 
-    protected void logoutUser(UserEntity user) {
-        user.setLoggedIn(false);
-        userRepository.save(user);
+    protected void logoutUser(String user) {
+        userRepository.updateLogin(user, false);
     }
 }
