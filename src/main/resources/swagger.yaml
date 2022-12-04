@@ -23,12 +23,14 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateUser'
       responses:
-        default:
+        '200':
           description: successful operation
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        default:
+          description: successful operation
   /user/createWithList:
     post:
       tags:
@@ -108,7 +110,7 @@ paths:
       operationId: logoutUser
       parameters:
         - name: username
-          in: path
+          in: query
           description: The username of the user to logout
           required: true
           schema:
@@ -181,6 +183,36 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
+  /user/{username}/change_password:
+    put:
+      tags:
+        - user
+      summary: Change user password
+      description: When logged in you can change your password
+      operationId: updatePassword
+      parameters:
+        - name: username
+          in: path
+          description: The username of the user
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              description: The new password
+              example: abc
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+        default:
+          description: error
 components:
   schemas:
     CreateUser:

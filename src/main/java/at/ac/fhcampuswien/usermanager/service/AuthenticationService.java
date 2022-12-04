@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class AuthenticationService {
     private static final Logger logger = Logger.getLogger(AuthenticationService.class.getName());
     private static final String INVALID_CREDS_MSG = "Username or password is invalid.";
+    private static final String NOT_LOGGED_IN = "You are not logged in.";
 
     private final UserService userService;
     private final AuthTokenService authTokenService;
@@ -82,23 +83,41 @@ public class AuthenticationService {
     }
 
     public void logoutUser(String username) {
-        var auth =
-                (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (auth == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, INVALID_CREDS_MSG);
+        UserEntity user = getLoggedInUser();
+
+        if (!user.isLoggedIn()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, NOT_LOGGED_IN);
         }
 
-        if (!auth.isLoggedIn()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, INVALID_CREDS_MSG);
-        }
-
-        if (auth.getUsername().equals(username)) {
+        if (user.getUsername().equals(username)) {
             SecurityContextHolder.clearContext();
             userService.logoutUser(username);
             return;
         }
 
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
+    }
+
+    public String updatePassword(String username, String newPassword) {
+        UserEntity user = getLoggedInUser();
+
+        if (!user.getUsername().equals(username)) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "You are not allowed to change the password of this user.");
+        }
+
+        userService.updatePassword(username, encoder.encode(newPassword));
+
+        return "Password changed";
+    }
+
+    private UserEntity getLoggedInUser() {
+        var authentication =SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName().equals("anonymousUser")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, NOT_LOGGED_IN);
+        }
+        return (UserEntity) authentication.getPrincipal();
     }
 
     private UserEntity toUserEntity(usermanager.v1.model.CreateUser user) {

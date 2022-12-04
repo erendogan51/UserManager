@@ -44,25 +44,26 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<Void> deleteUser(String username) {
+        validateUsername(username);
         return null;
     }
 
     @Override
     public ResponseEntity<User> getUserByName(String username) {
-
         return ResponseEntity.ok(userService.getUserByName(username));
     }
 
     @Override
     public ResponseEntity<String> loginUser(String username, String password) {
+        validateUsername(username);
+        validatePassword(password);
+
         return ResponseEntity.ok(authenticationService.loginUser(username, password));
     }
 
     @Override
     public ResponseEntity<Void> logoutUser(String username) {
-        if (StringUtils.isBlank(username)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is invalid");
-        }
+        validateUsername(username);
 
         authenticationService.logoutUser(username);
 
@@ -72,6 +73,23 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<Void> updateUser(String username, CreateUser user) {
         return null;
+    }
+
+    @Override
+    public ResponseEntity<String> updatePassword(String username, String newPassword) {
+        return ResponseEntity.ok(authenticationService.updatePassword(username, newPassword));
+    }
+
+    private void validateUsername(String username) {
+        if (StringUtils.isBlank(username)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is invalid");
+        }
+    }
+
+    private void validatePassword(String password) {
+        if (StringUtils.isBlank(password)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is invalid");
+        }
     }
 
     private void validateUser(CreateUser createUser) {

@@ -57,4 +57,14 @@ public class UserService implements UserDetailsService {
     protected void logoutUser(String user) {
         userRepository.updateLogin(user, false);
     }
+
+    public void updatePassword(String username, String encodedPassword) {
+        var user = getUserEntityByName(username);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "");
+        }
+
+        user.setPassword(encodedPassword);
+        addUser(user);
+    }
 }
