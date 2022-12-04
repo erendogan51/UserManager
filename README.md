@@ -39,7 +39,9 @@ mvn clean install
 
 - Launch Browser
 - Open http://localhost:8080/swagger.html
-
+- Create a user with with the POST /user endpoint
+- Login via the /login endpoint to retrieve a authentication token
+- Enter the token via `Authorize` button for any other request 
 ---
 
 ## Features
