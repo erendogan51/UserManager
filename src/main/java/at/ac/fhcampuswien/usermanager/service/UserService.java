@@ -2,21 +2,16 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
-import at.ac.fhcampuswien.usermanager.security.ErrorResponseException;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.logging.Logger;
-import javax.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.User;
-
-import java.time.Instant;
-import java.util.logging.Logger;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -34,7 +29,7 @@ public class UserService implements UserDetailsService {
     public User getUserByName(String username) {
         var user = userRepository.findUsersByUsername(username);
         if (user == null) {
-            throw new ErrorResponseException(HttpStatus.NOT_FOUND, "User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         return toUser(user);
     }
@@ -71,11 +66,11 @@ public class UserService implements UserDetailsService {
     public void updatePassword(String username, String encodedPassword) {
         var user = getUserEntityByName(username);
         if (user == null) {
-            throw new ErrorResponseException(HttpStatus.NOT_FOUND, "User Not Found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found");
         }
 
         if (user.getPassword().equals(encodedPassword)) {
-            throw new ErrorResponseException(
+            throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "New password must be the same as the existing one.");
         }
         user.setPassword(encodedPassword);

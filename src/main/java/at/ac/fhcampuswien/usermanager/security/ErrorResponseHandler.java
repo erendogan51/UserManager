@@ -12,13 +12,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ErrorResponseHandler extends ResponseEntityExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(ErrorResponseHandler.class);
 
-    @ExceptionHandler(value = {ErrorResponseException.class})
-    protected ResponseEntity<usermanager.v1.model.Response> errorResponseExceptionHandler(
-            ErrorResponseException ex) {
-        return ResponseEntity.status(ex.getStatus())
-                .body(new usermanager.v1.model.Response().message(ex.getMessage()));
-    }
-
     @ExceptionHandler(value = {ResponseStatusException.class})
     protected ResponseEntity<usermanager.v1.model.Response> responseStatusExceptionHandler(
             ResponseStatusException ex) {
