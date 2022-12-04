@@ -43,20 +43,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "**/auth/**", "**/user", "**/user/**")
+                .antMatchers(HttpMethod.POST, "/api/v*/auth/**", "/api/v*/user", "/api/v*/user/**")
+                .permitAll()
+                .and()
+                .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/api/v*/auth/logout"))
                 .permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/v*/**")
                 .permitAll()
                 .anyRequest()
-                .authenticated()
-                .and()
-                .logout()
-                .logoutRequestMatcher(new AntPathRequestMatcher("**/auth/logout"))
-                .permitAll()
-                .and()
-                .httpBasic();
+                .authenticated();
 
         http.addFilterBefore(
                 authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

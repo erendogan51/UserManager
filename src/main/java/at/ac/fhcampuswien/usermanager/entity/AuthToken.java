@@ -1,7 +1,7 @@
 package at.ac.fhcampuswien.usermanager.entity;
 
+import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AuthToken {
+public class AuthToken implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -42,7 +42,7 @@ public class AuthToken {
     @JoinColumn(nullable = false, name = "user_id")
     private UserEntity user;
 
-    public boolean isValid(){
+    public boolean isValid() {
         return expiresAtDateTime.isAfter(Instant.now());
     }
 }

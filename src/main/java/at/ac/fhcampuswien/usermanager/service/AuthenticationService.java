@@ -55,7 +55,7 @@ public class AuthenticationService {
         }
 
         if (user.isLoggedIn()) {
-            return "You are already logged in.";
+            return "You are already logged in. Your token was: ";
         }
 
         if (user.getBlockedUntil() != null && user.getBlockedUntil().isAfter(Instant.now())) {
@@ -63,10 +63,16 @@ public class AuthenticationService {
                     HttpStatus.UNAUTHORIZED,
                     "Login for this user is blocked until: " + user.getBlockedUntil());
         }
+        Authentication authentication;
+        try {
+            authentication =
+                    authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(username, password));
 
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(username, password));
+        } catch (Exception e) {
+            decreaseLoginAttempt(user);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
+        }
         if (authentication == null) {
             decreaseLoginAttempt(user);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
@@ -110,7 +116,7 @@ public class AuthenticationService {
     }
 
     private UserEntity getLoggedInUser() {
-        var authentication =SecurityContextHolder.getContext().getAuthentication();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName().equals("anonymousUser")) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, NOT_LOGGED_IN);
         }

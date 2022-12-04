@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
+import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,6 +41,7 @@ public class AuthTokenService {
         return authTokenRepository.findByToken(token);
     }
 
+    @Transactional
     public void removeToken(UserEntity user) {
         authTokenRepository.deleteAuthTokenByUser(user);
     }

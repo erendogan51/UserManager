@@ -63,7 +63,6 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<Void> logoutUser(String username) {
         validateUsername(username);
-
         authenticationService.logoutUser(username);
 
         return ResponseEntity.noContent().build();
