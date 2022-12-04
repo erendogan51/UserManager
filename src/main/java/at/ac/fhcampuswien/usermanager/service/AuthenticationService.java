@@ -5,7 +5,6 @@ import at.ac.fhcampuswien.usermanager.security.ErrorResponseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.logging.Logger;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthenticationService {
@@ -40,8 +38,7 @@ public class AuthenticationService {
     public usermanager.v1.model.User addUser(usermanager.v1.model.CreateUser user) {
         var existingUser = userService.getUserEntityByName(user.getUsername());
         if (existingUser != null) {
-            throw new ErrorResponseException(
-                    HttpStatus.CONFLICT, "The user name is already taken");
+            throw new ErrorResponseException(HttpStatus.CONFLICT, "The user name is already taken");
         }
 
         var userEntity = toUserEntity(user);
@@ -57,7 +54,8 @@ public class AuthenticationService {
         }
 
         if (user.isLoggedIn()) {
-            return "You are already logged in. Your token was: " + authTokenService.retrieveToken(user).getToken();
+            return "You are already logged in. Your token was: "
+                    + authTokenService.retrieveToken(user).getToken();
         }
 
         if (user.getBlockedUntil() != null && user.getBlockedUntil().isAfter(Instant.now())) {
@@ -83,7 +81,10 @@ public class AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         resetLoginAttempt(user);
 
-        return "Your token is: " + authTokenService.generateTokenAndSave(user).getToken();
+        return "Your token is: "
+                + authTokenService.generateTokenAndSave(user).getToken()
+                + "\n"
+                + "Press the 'Authorize' button and paste your token there.";
     }
 
     public void logoutUser(String username) {
@@ -103,7 +104,7 @@ public class AuthenticationService {
         throw new ErrorResponseException(HttpStatus.BAD_REQUEST, INVALID_CREDS_MSG);
     }
 
-    public String updatePassword(String username, String newPassword) {
+    public String updatePassword(String username, usermanager.v1.model.NewPassword newPassword) {
         UserEntity user = getLoggedInUser();
 
         if (!user.getUsername().equals(username)) {
@@ -112,9 +113,29 @@ public class AuthenticationService {
                     "You are not allowed to change the password of this user.");
         }
 
-        userService.updatePassword(username, encoder.encode(newPassword));
+        if (!newPassword.getNewPassword().equals(newPassword.getNewPasswordConfirmation())) {
+            throw new ErrorResponseException(HttpStatus.BAD_REQUEST, "Passwords do not match.");
+        }
 
-        return "Password changed";
+        userService.updatePassword(username, encoder.encode(newPassword.getNewPassword()));
+        logoutUser(username);
+
+        return "Password changed. Please login again and retrieve a new token.";
+    }
+
+    public void deleteUser(String username, String password) {
+        getLoggedInUser();
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password));
+
+        } catch (Exception e) {
+            throw new ErrorResponseException(HttpStatus.BAD_REQUEST, "Password is incorrect");
+        }
+
+        logoutUser(username);
+        userService.deleteUser(username);
     }
 
     private UserEntity getLoggedInUser() {
@@ -157,5 +178,9 @@ public class AuthenticationService {
         userEntity.setBlockedUntil(null);
         userEntity.setLoggedIn(true);
         userService.saveUser(userEntity);
+    }
+
+    protected Instant saveActivity(UserEntity user) {
+        return userService.saveActivity(user).getLastActivity();
     }
 }

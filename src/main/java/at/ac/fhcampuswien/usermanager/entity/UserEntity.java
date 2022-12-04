@@ -41,6 +41,7 @@ public class UserEntity implements UserDetails, Serializable {
     private Long loginCounter;
     private Instant blockedUntil;
     private boolean loggedIn;
+    private Instant lastActivity;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

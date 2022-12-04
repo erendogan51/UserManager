@@ -17,4 +17,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Modifying
     @Query("update UserEntity u set u.loggedIn = :logged_in where u.username = :username")
     void updateLogin(@Param("username") String username, @Param("logged_in") boolean loggedIn);
+
+    void deleteByUsername(String username);
 }

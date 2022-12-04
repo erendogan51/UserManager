@@ -71,10 +71,18 @@ paths:
                 type: string
         '401':
           description: Invalid username/password supplied
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
   /auth/logout:
     post:
       tags:
         - User
+      security:
+        - bearerAuth: [ ]
       summary: Logs out current logged in user session
       description: ''
       operationId: logoutUser
@@ -88,6 +96,12 @@ paths:
       responses:
         '200':
           description: logged out success
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
   /user/{username}:
     get:
       tags:
@@ -115,6 +129,12 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
     delete:
       tags:
         - User
@@ -130,6 +150,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Delete user success
@@ -137,6 +163,12 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
   /user/{username}/password:
     put:
       tags:
@@ -157,9 +189,7 @@ paths:
         content:
           application/json:
             schema:
-              type: string
-              description: The new password
-              example: abc
+              $ref: '#/components/schemas/NewPassword'
       responses:
         '200':
           description: Change password success
@@ -167,6 +197,12 @@ paths:
             application/json:
               schema:
                 type: string
+        default:
+          description: error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
 components:
   schemas:
     CreateUser:
@@ -208,12 +244,14 @@ components:
     Response:
       type: object
       properties:
-        code:
-          type: integer
-          format: int32
-        type:
-          type: string
         message:
+          type: string
+    NewPassword:
+      type: object
+      properties:
+        new_password:
+          type: string
+        new_password_confirmation:
           type: string
   securitySchemes:
     bearerAuth:

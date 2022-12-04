@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.api.UserApi;
 import usermanager.v1.model.CreateUser;
+import usermanager.v1.model.NewPassword;
 import usermanager.v1.model.User;
 
 @Controller
@@ -29,9 +30,10 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteUser(String username) {
+    public ResponseEntity<Void> deleteUser(String username, String password) {
         validateUsername(username);
-        return null;
+        authenticationService.deleteUser(username, password);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
@@ -57,7 +59,7 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<String> updatePassword(String username, String newPassword) {
+    public ResponseEntity<String> updatePassword(String username, NewPassword newPassword) {
         return ResponseEntity.ok(authenticationService.updatePassword(username, newPassword));
     }
 

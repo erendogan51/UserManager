@@ -70,22 +70,22 @@ TBD
 **Password Change**
 
 - [x] 300 If the user is logged in, the system shall allow the user to change his/her password.
-- [ ] 301 If the password is to be changed, the user shall re-enter his/her password for confirmation.
-- [ ] 302 If the entered password does not match the current password, the system shall display the error message "
+- [x] 301 If the password is to be changed, the user shall re-enter his/her password for confirmation.
+- [x] 302 If the entered password does not match the current password, the system shall display the error message "
   Password is not correct".
-- [ ] 303 If the password is to be changed, the system must ask the user twice for the new password.
-- [ ] 304 If the new password does not match the second entry, the system shall display the error message "Passwords do
+- [x] 303 If the password is to be changed, the system must ask the user twice for the new password.
+- [x] 304 If the new password does not match the second entry, the system shall display the error message "Passwords do
   not match".
-- [ ] 305 If the old password matches and the new password is successfully compared with the second entry, the system
+- [x] 305 If the old password matches and the new password is successfully compared with the second entry, the system
   shall replace the old password with the new one.
 
 **Deletion**
 
-- [ ] 400 When the user is logged in, the system shall provide the user with the option to delete the account.
-- [ ] 401 If the account is to be deleted, the user must enter his/her current password for confirmation.
-- [ ] 402 If the password entered does not match the current password, the system shall display the error message "
+- [x] 400 When the user is logged in, the system shall provide the user with the option to delete the account.
+- [x] 401 If the account is to be deleted, the user must enter his/her current password for confirmation.
+- [x] 402 If the password entered does not match the current password, the system shall display the error message "
   Password is incorrect".
-- [ ] 403 If the password entered was correct, the system shall log the user off and delete the account.
+- [x] 403 If the password entered was correct, the system shall log the user off and delete the account.
 
 ### Boundary Conditions & Non-Functional Requirements
 

@@ -2,6 +2,8 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
+import at.ac.fhcampuswien.usermanager.security.ErrorResponseException;
+import java.time.Instant;
 import java.util.logging.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,7 +53,8 @@ public class UserService implements UserDetailsService {
                 .id(userEntity.getId())
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
-                .username(userEntity.getUsername());
+                .username(userEntity.getUsername())
+                .password(userEntity.getPassword());
     }
 
     protected void logoutUser(UserEntity user) {
@@ -65,7 +68,20 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "");
         }
 
+        if (user.getPassword().equals(encodedPassword)) {
+            throw new ErrorResponseException(
+                    HttpStatus.BAD_REQUEST, "New password must be the same as the existing one.");
+        }
         user.setPassword(encodedPassword);
         saveUser(user);
+    }
+
+    protected void deleteUser(String username) {
+        userRepository.deleteByUsername(username);
+    }
+
+    protected UserEntity saveActivity(UserEntity user) {
+        user.setLastActivity(Instant.now());
+        return saveUser(user);
     }
 }
