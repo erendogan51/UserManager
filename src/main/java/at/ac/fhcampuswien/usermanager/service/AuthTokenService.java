@@ -32,6 +32,9 @@ public class AuthTokenService {
         token.setToken(UUID.randomUUID().toString());
         return token;
     }
+    public AuthToken retrieveToken(UserEntity userEntity){
+        return authTokenRepository.findAuthTokenByUser(userEntity);
+    }
 
     public AuthToken saveToken(AuthToken token) {
         return authTokenRepository.save(token);

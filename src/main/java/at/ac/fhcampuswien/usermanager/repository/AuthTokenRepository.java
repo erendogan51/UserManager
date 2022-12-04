@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AuthTokenRepository extends JpaRepository<AuthToken, Long> {
 
     Optional<AuthToken> findByToken(String token);
-    Optional<AuthToken> findAuthTokenByUser(UserEntity user);
+    AuthToken findAuthTokenByUser(UserEntity user);
     void deleteAuthTokenByUser(UserEntity user);
 }

@@ -66,7 +66,7 @@ paths:
                 type: string
                 format: date-time
           content:
-            application/json:
+            text/plain:
               schema:
                 type: string
         '401':

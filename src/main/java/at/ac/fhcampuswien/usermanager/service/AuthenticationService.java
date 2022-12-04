@@ -1,9 +1,11 @@
 package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.logging.Logger;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,7 +57,7 @@ public class AuthenticationService {
         }
 
         if (user.isLoggedIn()) {
-            return "You are already logged in. Your token was: ";
+            return "You are already logged in. Your token was: " + authTokenService.retrieveToken(user).getToken();
         }
 
         if (user.getBlockedUntil() != null && user.getBlockedUntil().isAfter(Instant.now())) {
@@ -81,7 +83,7 @@ public class AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         resetLoginAttempt(user);
 
-        return authTokenService.generateTokenAndSave(user).getToken();
+        return "Your token is: " + authTokenService.generateTokenAndSave(user).getToken();
     }
 
     public void logoutUser(String username) {
