@@ -40,6 +40,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .anonymous()
                 .disable()
+                .cors()
+                .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "**/auth/**", "**/user", "**/user/**")
                 .permitAll()
