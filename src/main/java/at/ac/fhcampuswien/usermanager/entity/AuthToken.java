@@ -41,4 +41,8 @@ public class AuthToken {
     @ManyToOne
     @JoinColumn(nullable = false, name = "user_id")
     private UserEntity user;
+
+    public boolean isValid(){
+        return expiresAtDateTime.isAfter(Instant.now());
+    }
 }

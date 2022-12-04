@@ -5,6 +5,7 @@ import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.AuthTokenRepository;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +34,9 @@ public class AuthTokenService {
 
     public AuthToken saveToken(AuthToken token) {
         return authTokenRepository.save(token);
+    }
+
+    public Optional<AuthToken> findByToken(String token) {
+        return authTokenRepository.findByToken(token);
     }
 }

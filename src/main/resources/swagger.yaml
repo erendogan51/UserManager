@@ -119,6 +119,8 @@ paths:
     get:
       tags:
         - user
+      security:
+        - bearerAuth: [ ]
       summary: Get user by user name
       description: ''
       operationId: getUserByName
@@ -143,6 +145,8 @@ paths:
     put:
       tags:
         - user
+      security:
+        - bearerAuth: [ ]
       summary: Update user
       description: This can only be done by the logged in user.
       operationId: updateUser
@@ -165,6 +169,8 @@ paths:
     delete:
       tags:
         - user
+      security:
+        - bearerAuth: [ ]
       summary: Delete user
       description: This can only be done by the logged in user.
       operationId: deleteUser
@@ -184,6 +190,8 @@ paths:
     put:
       tags:
         - user
+      security:
+        - bearerAuth: [ ]
       summary: Change user password
       description: When logged in you can change your password
       operationId: updatePassword
@@ -258,3 +266,7 @@ components:
           type: string
         message:
           type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

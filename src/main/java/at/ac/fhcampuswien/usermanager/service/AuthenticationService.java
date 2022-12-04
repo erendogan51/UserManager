@@ -44,7 +44,6 @@ public class AuthenticationService {
 
         var userEntity = toUserEntity(user);
         userService.addUser(userEntity);
-        authTokenService.generateTokenAndSave(userEntity);
 
         return userService.toUser(userEntity);
     }
@@ -74,12 +73,9 @@ public class AuthenticationService {
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        var auth =
-                (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         resetLoginAttempt(user);
 
-        return "user :" + auth.getUsername() + " logged in";
+        return authTokenService.generateTokenAndSave(user).getToken();
     }
 
     public void logoutUser(String username) {
