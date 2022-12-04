@@ -71,8 +71,6 @@ paths:
                 type: string
         '401':
           description: Invalid username/password supplied
-        default:
-          description: error
   /auth/logout:
     post:
       tags:
@@ -139,7 +137,7 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
-  /user/{username}/change_password:
+  /user/{username}/password:
     put:
       tags:
         - user
@@ -169,8 +167,6 @@ paths:
             application/json:
               schema:
                 type: string
-        default:
-          description: error
 components:
   schemas:
     CreateUser:
