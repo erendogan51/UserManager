@@ -16,7 +16,7 @@ public class ErrorResponseException extends RuntimeException {
         this.statusCode = httpStatus;
     }
 
-    public HttpStatus getStatusCode() {
+    public HttpStatus getStatus() {
         return statusCode;
     }
 }
