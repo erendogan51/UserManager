@@ -2,9 +2,11 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.security.ErrorResponseException;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.logging.Logger;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,11 +26,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder encoder;
 
-    public AuthenticationService(
-            UserService userService,
-            AuthTokenService authTokenService,
-            AuthenticationManager authenticationManager,
-            BCryptPasswordEncoder encoder) {
+    public AuthenticationService(UserService userService, AuthTokenService authTokenService, AuthenticationManager authenticationManager, BCryptPasswordEncoder encoder) {
         this.userService = userService;
         this.authTokenService = authTokenService;
         this.authenticationManager = authenticationManager;
@@ -54,20 +52,15 @@ public class AuthenticationService {
         }
 
         if (user.isLoggedIn()) {
-            return "You are already logged in. Your token was: "
-                    + authTokenService.retrieveToken(user).getToken();
+            return "You are already logged in. Your token was: " + authTokenService.retrieveToken(user).getToken();
         }
 
         if (user.getBlockedUntil() != null && user.getBlockedUntil().isAfter(Instant.now())) {
-            throw new ErrorResponseException(
-                    HttpStatus.UNAUTHORIZED,
-                    "Login for this user is blocked until: " + user.getBlockedUntil());
+            throw new ErrorResponseException(HttpStatus.UNAUTHORIZED, "Login for this user is blocked until: " + user.getBlockedUntil());
         }
         Authentication authentication;
         try {
-            authentication =
-                    authenticationManager.authenticate(
-                            new UsernamePasswordAuthenticationToken(username, password));
+            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
         } catch (Exception e) {
             decreaseLoginAttempt(user);
@@ -81,10 +74,7 @@ public class AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         resetLoginAttempt(user);
 
-        return "Your token is: "
-                + authTokenService.generateTokenAndSave(user).getToken()
-                + "\n"
-                + "Press the 'Authorize' button and paste your token there.";
+        return "Your token is: " + authTokenService.generateTokenAndSave(user).getToken() + "\n" + "Press the 'Authorize' button and paste your token there.";
     }
 
     public void logoutUser(String username) {
@@ -106,9 +96,7 @@ public class AuthenticationService {
         UserEntity user = getLoggedInUser();
 
         if (!user.getUsername().equals(username)) {
-            throw new ErrorResponseException(
-                    HttpStatus.UNAUTHORIZED,
-                    "You are not allowed to change the password of this user.");
+            throw new ErrorResponseException(HttpStatus.UNAUTHORIZED, "You are not allowed to change the password of this user.");
         }
 
         if (!newPassword.getNewPassword().equals(newPassword.getNewPasswordConfirmation())) {
@@ -125,12 +113,10 @@ public class AuthenticationService {
         var user = getLoggedInUser();
 
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
         } catch (Exception e) {
-            throw new ErrorResponseException(
-                    HttpStatus.BAD_REQUEST, "Password is incorrect or user does not exist");
+            throw new ErrorResponseException(HttpStatus.BAD_REQUEST, "Password is incorrect or user does not exist");
         }
 
         SecurityContextHolder.clearContext();
@@ -166,17 +152,12 @@ public class AuthenticationService {
         if (user.getLoginCounter() == 0 && user.getBlockedUntil() == null) {
             user.setBlockedUntil(Instant.now().plus(1, ChronoUnit.MINUTES));
             userService.saveUser(user);
-            throw new ErrorResponseException(
-                    HttpStatus.BAD_REQUEST, "Login for this user is blocked for 1 minute");
+            throw new ErrorResponseException(HttpStatus.BAD_REQUEST, "Login for this user is blocked for 1 minute");
         }
 
         user.setLoginCounter(user.getLoginCounter() - 1);
         userService.saveUser(user);
-        logger.warning(
-                "False login Attempt! User: "
-                        + user.getUsername()
-                        + " Attempt Left: "
-                        + user.getLoginCounter());
+        logger.warning("False login Attempt! User: " + user.getUsername() + " Attempt Left: " + user.getLoginCounter());
     }
 
     protected void resetLoginAttempt(UserEntity userEntity) {
