@@ -83,7 +83,7 @@ public class AuthenticationService {
         UserEntity user = getLoggedInUser();
 
         if (!user.isLoggedIn()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, NOT_LOGGED_IN);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, NOT_LOGGED_IN);
         }
 
         if (user.getUsername().equals(username)) {
@@ -106,8 +106,13 @@ public class AuthenticationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Passwords do not match.");
         }
 
+        if (encoder.matches(newPassword.getNewPassword(), user.getPassword())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "New password must be the same as the existing one.");
+        }
+
         userService.updatePassword(username, encoder.encode(newPassword.getNewPassword()));
-        logoutUser(username);
+        SecurityContextHolder.clearContext();
 
         return "Password changed. Please login again and retrieve a new token.";
     }
@@ -127,9 +132,9 @@ public class AuthenticationService {
     }
 
     private void logoutUser(UserEntity user) {
-        SecurityContextHolder.clearContext();
         userService.logoutUser(user);
         authTokenService.removeToken(user);
+        SecurityContextHolder.clearContext();
     }
 
     private UserEntity getLoggedInUser() {

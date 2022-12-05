@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -23,12 +24,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
     private final AuthTokenService authTokenService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder bCryptPasswordEncoder;
 
     public WebSecurityConfig(
             UserService userService,
             AuthTokenService authTokenService,
-            BCryptPasswordEncoder bCryptPasswordEncoder) {
+            PasswordEncoder bCryptPasswordEncoder) {
         this.userService = userService;
         this.authTokenService = authTokenService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
