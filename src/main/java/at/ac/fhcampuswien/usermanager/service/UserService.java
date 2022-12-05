@@ -2,6 +2,10 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
+import java.time.Instant;
+import java.util.Date;
+import java.util.logging.Logger;
+import javax.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,10 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.User;
-
-import java.time.Instant;
-import java.util.Date;
-import java.util.logging.Logger;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -24,6 +24,7 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     protected UserEntity saveUser(UserEntity user) {
         return userRepository.save(user);
     }
@@ -51,7 +52,13 @@ public class UserService implements UserDetailsService {
     }
 
     protected User toUser(UserEntity userEntity) {
-        return new User().id(userEntity.getId()).firstName(userEntity.getFirstName()).lastName(userEntity.getLastName()).username(userEntity.getUsername()).password(userEntity.getPassword()).lastActivity(Date.from(userEntity.getLastActivity()));
+        return new User()
+                .id(userEntity.getId())
+                .firstName(userEntity.getFirstName())
+                .lastName(userEntity.getLastName())
+                .username(userEntity.getUsername())
+                .password(userEntity.getPassword())
+                .lastActivity(Date.from(userEntity.getLastActivity()));
     }
 
     protected void logoutUser(UserEntity user) {
@@ -65,10 +72,8 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found");
         }
 
-        if (user.getPassword().equals(encodedPassword)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "New password must be the same as the existing one.");
-        }
         user.setPassword(encodedPassword);
+        user.setLoggedIn(false);
         saveUser(user);
     }
 
