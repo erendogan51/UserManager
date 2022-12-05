@@ -2,9 +2,6 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
-import java.time.Instant;
-import java.util.Date;
-import java.util.logging.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,8 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.User;
 
+import java.time.Instant;
+import java.util.Date;
+import java.util.logging.Logger;
+
 @Service
 public class UserService implements UserDetailsService {
+
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private final UserRepository userRepository;
 
@@ -49,13 +51,7 @@ public class UserService implements UserDetailsService {
     }
 
     protected User toUser(UserEntity userEntity) {
-        return new User()
-                .id(userEntity.getId())
-                .firstName(userEntity.getFirstName())
-                .lastName(userEntity.getLastName())
-                .username(userEntity.getUsername())
-                .password(userEntity.getPassword())
-                .lastActivity(Date.from(userEntity.getLastActivity()));
+        return new User().id(userEntity.getId()).firstName(userEntity.getFirstName()).lastName(userEntity.getLastName()).username(userEntity.getUsername()).password(userEntity.getPassword()).lastActivity(Date.from(userEntity.getLastActivity()));
     }
 
     protected void logoutUser(UserEntity user) {
@@ -70,8 +66,7 @@ public class UserService implements UserDetailsService {
         }
 
         if (user.getPassword().equals(encodedPassword)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "New password must be the same as the existing one.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "New password must be the same as the existing one.");
         }
         user.setPassword(encodedPassword);
         saveUser(user);
