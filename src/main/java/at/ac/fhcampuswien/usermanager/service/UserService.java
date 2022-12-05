@@ -16,6 +16,7 @@ import usermanager.v1.model.User;
 
 @Service
 public class UserService implements UserDetailsService {
+
     private static final Logger logger = Logger.getLogger(UserService.class.getName());
     private final UserRepository userRepository;
 
