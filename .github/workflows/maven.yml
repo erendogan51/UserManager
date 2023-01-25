@@ -34,11 +34,10 @@ jobs:
       id: jacoco
       uses: madrapps/jacoco-report@v1.3
       with:
-        path: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
+        paths: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
         token: ${{ secrets.GITHUB_TOKEN }}
-        min-coverage-overall: 40
+        min-coverage-overall: 60
         min-coverage-changed-files: 60
-        debug-mode: false
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
