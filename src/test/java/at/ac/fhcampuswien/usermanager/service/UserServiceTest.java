@@ -12,8 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.User;
 
-import java.time.Instant;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -106,8 +104,7 @@ class UserServiceTest extends ServiceTestConfig {
         when(userRepository.findUsersByUsername(username)).thenReturn(null);
 
         // act & assert
-        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(username)
-        );
+        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(username));
     }
 
     @Test
@@ -172,7 +169,7 @@ class UserServiceTest extends ServiceTestConfig {
         when(userRepository.findUsersByUsername(username)).thenReturn(null);
 
         // act & assert
-        assertThrows(ResponseStatusException.class, () ->   userService.updatePassword(username, password));
+        assertThrows(ResponseStatusException.class, () -> userService.updatePassword(username, password));
     }
 
 
