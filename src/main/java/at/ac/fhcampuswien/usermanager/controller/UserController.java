@@ -39,7 +39,9 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<User> getUserByName(String username) {
         validateUsername(username);
-        return ResponseEntity.ok(userService.getUserByName(username));
+        var userEntity = userService.getUserEntityByName(username);
+        var user = userService.toUser(userEntity);
+        return ResponseEntity.ok(user);
     }
 
 

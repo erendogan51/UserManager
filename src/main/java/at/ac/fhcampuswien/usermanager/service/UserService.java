@@ -29,15 +29,11 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public User getUserByName(String username) {
+    public UserEntity getUserEntityByName(String username) {
         var user = userRepository.findUsersByUsername(username);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
-        return toUser(user);
-    }
-
-    protected UserEntity getUserEntityByName(String username) {
         return userRepository.findUsersByUsername(username);
     }
 
@@ -51,7 +47,7 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    protected User toUser(UserEntity userEntity) {
+    public User toUser(UserEntity userEntity) {
         return new User()
                 .id(userEntity.getId())
                 .firstName(userEntity.getFirstName())

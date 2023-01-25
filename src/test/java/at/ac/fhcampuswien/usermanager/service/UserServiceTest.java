@@ -45,7 +45,7 @@ class UserServiceTest extends ServiceTestConfig {
 
     @Test
     @DisplayName("get User correctly")
-    void getUser_success() {
+    void getUserEntityByName_success() {
         // arrange
         UserEntity user = easyRandom.nextObject(UserEntity.class);
         String username = "test";
@@ -53,15 +53,16 @@ class UserServiceTest extends ServiceTestConfig {
 
         // act
         when(userRepository.findUsersByUsername(username)).thenReturn(user);
-        var result = userService.getUserByName(username);
+        var result = userService.getUserEntityByName(username);
 
         // assert
         assertEquals(result.getUsername(), user.getUsername());
+        assertEquals(result.getId(), user.getId());
     }
 
     @Test
     @DisplayName("get User NOT_FOUND")
-    void getUser_notFound() {
+    void getUserEntityByName_notFound() {
         // arrange
         UserEntity user = easyRandom.nextObject(UserEntity.class);
         String username = "test";
@@ -70,9 +71,10 @@ class UserServiceTest extends ServiceTestConfig {
         // act
         when(userRepository.findUsersByUsername(username)).thenReturn(null);
 
-
         // assert
-        assertThrows(ResponseStatusException.class, () -> userService.getUserByName(username)
+        assertThrows(ResponseStatusException.class, () -> userService.getUserEntityByName(username)
         );
     }
+
+
 }
