@@ -2,10 +2,6 @@ package at.ac.fhcampuswien.usermanager.service;
 
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
-import java.time.Instant;
-import java.util.Date;
-import java.util.logging.Logger;
-import javax.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,6 +9,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.User;
+
+import javax.transaction.Transactional;
+import java.time.Instant;
+import java.util.Date;
+import java.util.logging.Logger;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -37,14 +38,14 @@ public class UserService implements UserDetailsService {
         return userRepository.findUsersByUsername(username);
     }
 
+    /** The UserDetailsService interface by Spring Security is used to retrieve user-related data */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userRepository.findUsersByUsername(username);
-        if (user == null) {
+        var userDetails = userRepository.findUsersByUsername(username);
+        if (userDetails == null) {
             throw new UsernameNotFoundException("User not found.");
         }
-
-        return user;
+        return userDetails;
     }
 
     public User toUser(UserEntity userEntity) {
