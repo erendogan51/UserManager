@@ -7,23 +7,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import usermanager.v1.model.User;
+import org.springframework.web.server.ResponseStatusException;
 
-import static org.mockito.Mockito.verify;
-
-import java.time.Instant;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 
-class UserServiceTest extends ServiceTestConfig{
+class UserServiceTest extends ServiceTestConfig {
     @Mock
     private UserRepository userRepository;
 
     private UserService userService;
 
     private EasyRandom easyRandom;
+
     @BeforeEach
     void setUp() {
         this.userService = new UserService(this.userRepository);
@@ -71,9 +69,10 @@ class UserServiceTest extends ServiceTestConfig{
 
         // act
         when(userRepository.findUsersByUsername(username)).thenReturn(null);
-        var result = userService.getUserByName(username);
+
 
         // assert
-
+        assertThrows(ResponseStatusException.class, () -> userService.getUserByName(username)
+        );
     }
 }
