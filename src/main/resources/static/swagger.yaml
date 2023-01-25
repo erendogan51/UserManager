@@ -219,17 +219,20 @@ components:
         username:
           type: string
           example: theUser
-          nullable: false
         firstName:
           type: string
           example: John
-          nullable: false
         lastName:
           type: string
           example: James
         password:
           type: string
           example: '12345'
+      required:
+        - username
+        - firstName
+        - lastName
+        - password
     User:
       type: object
       properties:
@@ -264,6 +267,9 @@ components:
           type: string
         new_password_confirmation:
           type: string
+      required:
+        - new_password
+        - new_password_confirmation
   securitySchemes:
     bearerAuth:
       type: http
