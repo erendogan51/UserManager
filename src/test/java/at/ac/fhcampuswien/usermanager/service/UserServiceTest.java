@@ -7,10 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import usermanager.v1.model.User;
+
+import static org.mockito.Mockito.verify;
 
 import java.time.Instant;
 
@@ -35,42 +34,46 @@ class UserServiceTest extends ServiceTestConfig{
     @DisplayName("Save User correctly")
     void saveUser_success() {
         // arrange
-        UserEntity userEntity = easyRandom.nextObject(UserEntity.class);
-        userEntity.setUsername("test");
+        String username = "test";
+        UserEntity user = easyRandom.nextObject(UserEntity.class);
+        user.setUsername(username);
 
         // act
-        when(userService.saveUser(userEntity)).thenReturn(userEntity);
-
+        when(userService.saveUser(user)).thenReturn(user);
+        var result = userService.saveUser(user);
         // assert
-        assertEquals("test", userEntity.getUsername());
+        assertEquals(result.getUsername(), user.getUsername());
     }
 
-    //@Test
+    @Test
     @DisplayName("get User correctly")
     void getUser_success() {
         // arrange
-        User user = easyRandom.nextObject(User.class);
-        user.setUsername("test");
+        UserEntity user = easyRandom.nextObject(UserEntity.class);
+        String username = "test";
+        user.setUsername(username);
 
         // act
-        when(userService.getUserByName("test")).thenReturn(user);
+        when(userRepository.findUsersByUsername(username)).thenReturn(user);
+        var result = userService.getUserByName(username);
 
         // assert
-        //assertEquals(user, );
+        assertEquals(result.getUsername(), user.getUsername());
     }
 
-    //@Test
+    @Test
     @DisplayName("get User NOT_FOUND")
     void getUser_notFound() {
-        UserEntity entity = new UserEntity();
-        entity.setUsername("joemama");
-        entity.setLastActivity(Instant.now());
+        // arrange
+        UserEntity user = easyRandom.nextObject(UserEntity.class);
+        String username = "test";
+        user.setUsername(username);
 
-        userRepository.save(entity);
+        // act
+        when(userRepository.findUsersByUsername(username)).thenReturn(null);
+        var result = userService.getUserByName(username);
 
-        var user = userService.getUserByName("notExist");
+        // assert
 
-        // TODO: correct assert
-        assertNotNull(user);
     }
 }
