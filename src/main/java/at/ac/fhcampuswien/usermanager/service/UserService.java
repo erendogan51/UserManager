@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void updatePassword(String username, String encodedPassword) {
-        var user = getUserEntityByName(username);
+        var user = userRepository.findUsersByUsername(username);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found");
         }
