@@ -199,6 +199,28 @@ class AuthenticationServiceTest extends ServiceTestConfig {
     }
 
     @Test
+    @DisplayName("delete user bad request")
+    void deleteUser_success() {
+        // arrange
+        UserEntity expected = easyRandom.nextObject(UserEntity.class);
+        String username = "test";
+        String password = "im-secured";
+        expected.setUsername(username);
+        expected.setLoggedIn(true);
+        expected.setBlockedUntil(Instant.MAX);
+
+        // act
+        mockLogin(expected);
+        when(userRepository.findUsersByUsername(username)).thenReturn(expected);
+
+        // act
+        String actual = authenticationService.deleteUser(username, password);
+
+        // assert
+        assertEquals("Delete user success", actual);
+    }
+
+    @Test
     void logout() {
         // arrange
         UserEntity user = easyRandom.nextObject(UserEntity.class);
