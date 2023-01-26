@@ -4,20 +4,28 @@ import at.ac.fhcampuswien.usermanager.entity.AuthToken;
 import at.ac.fhcampuswien.usermanager.entity.UserEntity;
 import at.ac.fhcampuswien.usermanager.repository.UserRepository;
 import org.jeasy.random.EasyRandom;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.CreateUser;
+import usermanager.v1.model.NewPassword;
 import usermanager.v1.model.User;
 
 import java.time.Instant;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class AuthenticationServiceTest extends ServiceTestConfig {
@@ -138,13 +146,80 @@ class AuthenticationServiceTest extends ServiceTestConfig {
 
     @Test
     void updatePassword() {
+        UserEntity user = easyRandom.nextObject(UserEntity.class);
+        String username = "test";
+        user.setUsername(username);
+        user.setLoggedIn(false);
+
+        mockLogin(user);
+
+        assertThrows(
+                ResponseStatusException.class,
+                () ->
+                        authenticationService.updatePassword(
+                                "randomUser",
+                                new NewPassword()
+                                        .newPassword("pw1")
+                                        .newPasswordConfirmation("pw2")));
+
+        assertThrows(
+                ResponseStatusException.class,
+                () ->
+                        authenticationService.updatePassword(
+                                username,
+                                new NewPassword()
+                                        .newPassword("pw1")
+                                        .newPasswordConfirmation("pw2")));
+
+        when(encoder.matches(any(), any())).thenReturn(false);
+
+        assertThrows(
+                ResponseStatusException.class,
+                () ->
+                        authenticationService.updatePassword(
+                                username,
+                                new NewPassword()
+                                        .newPassword("pw1")
+                                        .newPasswordConfirmation("pw1")));
     }
 
     @Test
     void deleteUser() {
+        // arrange
+        UserEntity expected = easyRandom.nextObject(UserEntity.class);
+        String username = "test";
+        expected.setUsername(username);
+        expected.setLoggedIn(true);
+        expected.setBlockedUntil(Instant.MAX);
+        when(userRepository.findUsersByUsername(username)).thenReturn(expected);
+        // act & assert
+        assertThrows(
+                ResponseStatusException.class, () -> authenticationService.logoutUser(username));
     }
 
     @Test
-    void resetLoginAttempt() {
+    void logout() {
+        // arrange
+        UserEntity user = easyRandom.nextObject(UserEntity.class);
+        String username = "test";
+        user.setUsername(username);
+        user.setLoggedIn(false);
+
+        // act
+        mockLogin(user);
+
+        // assert
+        assertThrows(
+                ResponseStatusException.class, () -> authenticationService.logoutUser(username));
+
+        // arrange
+        user.setLoggedIn(true);
+        // act & assert
+        Assertions.assertDoesNotThrow(() -> authenticationService.logoutUser(username));
+    }
+
+    private void mockLogin(UserDetails key) {
+        SecurityContextHolder.setContext(
+                new SecurityContextImpl(new TestingAuthenticationToken(key, null)));
     }
 }
