@@ -35,15 +35,11 @@ class AuthenticationServiceTest extends ServiceTestConfig {
     @Mock
     private BCryptPasswordEncoder encoder;
     private AuthenticationService authenticationService;
-
     private EasyRandom easyRandom;
 
     @BeforeEach
     void setUp() {
         this.userService = new UserService(this.userRepository);
-        this.authTokenService = authTokenService;
-        this.authenticationManager = authenticationManager;
-        this.encoder = encoder;
         this.authenticationService = new AuthenticationService(userService, authTokenService, authenticationManager, encoder);
         this.easyRandom = new EasyRandom();
     }
