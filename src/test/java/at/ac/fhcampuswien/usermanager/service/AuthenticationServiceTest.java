@@ -22,7 +22,6 @@ import usermanager.v1.model.User;
 
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -184,17 +183,19 @@ class AuthenticationServiceTest extends ServiceTestConfig {
     }
 
     @Test
-    void deleteUser() {
+    @DisplayName("delete user bad request")
+    void deleteUser_badRequest() {
         // arrange
         UserEntity expected = easyRandom.nextObject(UserEntity.class);
         String username = "test";
+        String password = "im-secured";
         expected.setUsername(username);
         expected.setLoggedIn(true);
         expected.setBlockedUntil(Instant.MAX);
         when(userRepository.findUsersByUsername(username)).thenReturn(expected);
         // act & assert
         assertThrows(
-                ResponseStatusException.class, () -> authenticationService.logoutUser(username));
+                ResponseStatusException.class, () -> authenticationService.deleteUser(username, password));
     }
 
     @Test
