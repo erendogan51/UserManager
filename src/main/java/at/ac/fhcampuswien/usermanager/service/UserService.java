@@ -30,12 +30,16 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public boolean existsByUsername(String username){
+        return userRepository.existsByUsername(username);
+    }
+
     public UserEntity getUserEntityByName(String username) {
         var user = userRepository.findUsersByUsername(username);
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
-        return userRepository.findUsersByUsername(username);
+        return user;
     }
 
     /** The UserDetailsService interface by Spring Security is used to retrieve user-related data */
