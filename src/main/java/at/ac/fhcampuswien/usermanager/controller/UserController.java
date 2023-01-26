@@ -82,21 +82,13 @@ public class UserController implements UserApi {
     private void validateUser(CreateUser createUser) {
         if (createUser == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user cannot be null");
-        }
-
-        if (createUser.getUsername() == null) {
+        } else if (createUser.getUsername() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username cannot be null");
-        }
-
-        if (createUser.getFirstName() == null) {
+        } else if (createUser.getFirstName() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "first name cannot be null");
-        }
-
-        if (createUser.getLastName() == null) {
+        } else if (createUser.getLastName() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "surname cannot be null");
-        }
-
-        if (createUser.getPassword() == null) {
+        } else if (createUser.getPassword() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "password cannot be null");
         }
     }
