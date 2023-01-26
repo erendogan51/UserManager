@@ -89,7 +89,7 @@ public class AuthenticationService {
         }
 
         if (user.getUsername().equals(username)) {
-            logoutUser(user);
+            handleLogout(user);
             return;
         }
 
@@ -133,7 +133,7 @@ public class AuthenticationService {
         return "Delete user success";
     }
 
-    private void logoutUser(UserEntity user) {
+    private void handleLogout(UserEntity user) {
         userService.logoutUser(user);
         authTokenService.removeToken(user);
         SecurityContextHolder.clearContext();
@@ -178,7 +178,7 @@ public class AuthenticationService {
 
     private void handleActivity(UserEntity user) {
         if (Duration.between(user.getLastActivity(), Instant.now()).getSeconds() >= 120) {
-            logoutUser(user);
+            handleLogout(user);
         }
         userService.saveActivity(user);
     }

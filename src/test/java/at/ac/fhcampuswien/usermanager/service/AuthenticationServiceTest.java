@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 import usermanager.v1.model.CreateUser;
@@ -19,7 +18,6 @@ import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class AuthenticationServiceTest extends ServiceTestConfig {
@@ -125,7 +123,17 @@ class AuthenticationServiceTest extends ServiceTestConfig {
     }
 
     @Test
-    void logoutUser() {
+    @DisplayName("logout user unauthorized")
+    void logoutUser_unauthorized() {
+        // arrange
+        UserEntity expected = easyRandom.nextObject(UserEntity.class);
+        String username = "test";
+        expected.setUsername(username);
+        expected.setLoggedIn(true);
+        expected.setBlockedUntil(Instant.MAX);
+        when(userRepository.findUsersByUsername(username)).thenReturn(expected);
+        // act & assert
+        assertThrows(ResponseStatusException.class, () -> authenticationService.logoutUser(username));
     }
 
     @Test
