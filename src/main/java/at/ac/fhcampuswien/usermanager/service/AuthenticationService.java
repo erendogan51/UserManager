@@ -13,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import usermanager.v1.model.CreateUser;
+import usermanager.v1.model.User;
 
 @Service
 public class AuthenticationService {
@@ -32,9 +34,9 @@ public class AuthenticationService {
         this.encoder = encoder;
     }
 
-    public usermanager.v1.model.User addUser(usermanager.v1.model.CreateUser user) {
-        var existingUser = userService.getUserEntityByName(user.getUsername());
-        if (existingUser != null) {
+    public User addUser(CreateUser user) {
+        var exists = userService.existsByUsername(user.getUsername());
+        if (exists) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The user name is already taken");
         }
 
@@ -87,7 +89,7 @@ public class AuthenticationService {
         }
 
         if (user.getUsername().equals(username)) {
-            logoutUser(user);
+            handleLogout(user);
             return;
         }
 
@@ -131,7 +133,7 @@ public class AuthenticationService {
         return "Delete user success";
     }
 
-    private void logoutUser(UserEntity user) {
+    private void handleLogout(UserEntity user) {
         userService.logoutUser(user);
         authTokenService.removeToken(user);
         SecurityContextHolder.clearContext();
@@ -145,7 +147,7 @@ public class AuthenticationService {
         return (UserEntity) authentication.getPrincipal();
     }
 
-    private UserEntity toUserEntity(usermanager.v1.model.CreateUser user) {
+    protected UserEntity toUserEntity(usermanager.v1.model.CreateUser user) {
         var userEntity = new UserEntity();
         userEntity.setFirstName(user.getFirstName());
         userEntity.setLastName(user.getLastName());
@@ -153,6 +155,13 @@ public class AuthenticationService {
         userEntity.setPassword(encoder.encode(user.getPassword()));
         userEntity.setLoginCounter(3L);
         return userEntity;
+    }
+
+    protected void resetLoginAttempt(UserEntity userEntity) {
+        userEntity.setLoginCounter(3L);
+        userEntity.setBlockedUntil(null);
+        userEntity.setLoggedIn(true);
+        userService.saveUser(userEntity);
     }
 
     private void decreaseLoginAttempt(UserEntity user) {
@@ -167,16 +176,9 @@ public class AuthenticationService {
         logger.warning("False login Attempt! User: " + user.getUsername() + " Attempt Left: " + user.getLoginCounter());
     }
 
-    protected void resetLoginAttempt(UserEntity userEntity) {
-        userEntity.setLoginCounter(3L);
-        userEntity.setBlockedUntil(null);
-        userEntity.setLoggedIn(true);
-        userService.saveUser(userEntity);
-    }
-
-    protected void handleActivity(UserEntity user) {
+    private void handleActivity(UserEntity user) {
         if (Duration.between(user.getLastActivity(), Instant.now()).getSeconds() >= 120) {
-            logoutUser(user);
+            handleLogout(user);
         }
         userService.saveActivity(user);
     }
